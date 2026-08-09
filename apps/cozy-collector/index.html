@@ -3,227 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#f3ede4">
-<title>Cozy Collector · 모으기 게임</title>
+<meta name="theme-color" content="#cfe8d0">
+<title>Cozy Collector · 오리의 마을 산책</title>
 <style>
   :root{
-    --bg:#f3ede4; --panel:#fffaf2; --ink:#4b4235; --sub:#9a8f7d;
-    --accent:#e8a87c; --accent2:#c38d9e; --good:#8bb174; --line:#eadfce;
-    --shadow:0 8px 24px rgba(120,100,70,.14);
+    --ink:#4b4235; --sub:#7d7360; --panel:#fffaf2; --line:#e8dcc8;
+    --accent:#e8a87c; --accent2:#c38d9e; --good:#7fae6b;
+    --shadow:0 8px 22px rgba(120,100,70,.16);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-    background:radial-gradient(120% 100% at 50% 0%,#faf5ec,var(--bg));
-    color:var(--ink);display:flex;justify-content:center;overflow-x:hidden;
-    user-select:none;
-  }
-  .app{width:100%;max-width:460px;min-height:100dvh;display:flex;flex-direction:column;padding:14px 14px 24px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-  h1{font-size:19px;margin:0;letter-spacing:-.3px}
-  h1 small{display:block;font-size:11px;color:var(--sub);font-weight:500;letter-spacing:0}
-  .coins{background:var(--panel);border:1px solid var(--line);border-radius:999px;
-    padding:7px 14px;font-weight:700;font-size:14px;box-shadow:var(--shadow);display:flex;gap:6px;align-items:center}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    color:var(--ink);background:#dff0dc;display:flex;justify-content:center;overflow:hidden;user-select:none}
+  .app{width:100%;max-width:460px;height:100dvh;display:flex;flex-direction:column;padding:10px 10px 8px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  h1{font-size:16px;margin:0;letter-spacing:-.3px}
+  h1 small{display:block;font-size:10px;color:var(--sub);font-weight:500}
+  .count{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;
+    font-weight:700;font-size:13px;box-shadow:var(--shadow);white-space:nowrap}
 
-  /* collecting field */
-  .field{position:relative;flex:1;min-height:300px;background:var(--panel);border:1px solid var(--line);
-    border-radius:26px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px;
-    background-image:radial-gradient(circle at 20% 20%,#fff7ea,transparent 40%),
-                     radial-gradient(circle at 80% 70%,#f6ecdd,transparent 45%);}
-  .field .hint{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);
-    text-align:center;color:var(--sub);font-size:14px;pointer-events:none;padding:0 30px;line-height:1.6}
-  .drop{position:absolute;font-size:34px;cursor:pointer;transition:transform .12s;
-    will-change:transform,top;animation:fall linear forwards}
-  .drop:active{transform:scale(.8)}
-  @keyframes fall{from{transform:translateY(-60px)}to{transform:translateY(0)}}
-  .pop{position:absolute;font-size:13px;font-weight:700;color:var(--good);pointer-events:none;
-    animation:pop .7s ease-out forwards}
-  @keyframes pop{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(1.3)}}
+  .stage{position:relative;flex:1;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
+  canvas{display:block;width:100%;height:100%;touch-action:none}
+  .bubble{position:absolute;transform:translate(-50%,-100%);background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:7px 11px;font-size:12px;font-weight:600;color:var(--ink);
+    box-shadow:var(--shadow);pointer-events:none;max-width:180px;line-height:1.4;opacity:0;transition:opacity .2s;z-index:5}
+  .bubble.show{opacity:1}
+  .bubble:after{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);
+    border:7px solid transparent;border-top-color:#fff}
+  .banner{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(75,66,53,.9);
+    color:#fff;padding:8px 16px;border-radius:999px;font-size:12px;font-weight:600;opacity:0;
+    transition:.3s;pointer-events:none;z-index:6;white-space:nowrap}
+  .banner.show{opacity:1}
+  .hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.85);
+    color:var(--sub);padding:6px 14px;border-radius:999px;font-size:11px;z-index:4;pointer-events:none}
 
-  /* current target */
-  .target{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
-    border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:12px}
-  .target .emoji{font-size:32px}
-  .target .meta{flex:1;min-width:0}
-  .target .name{font-weight:700;font-size:15px}
-  .target .bar{height:10px;background:#efe6d6;border-radius:999px;margin-top:7px;overflow:hidden}
-  .target .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));
-    border-radius:999px;transition:width .3s}
-  .target .count{font-size:12px;color:var(--sub);margin-top:5px}
-
-  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  button{font-family:inherit;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:700;
-    cursor:pointer;color:#fff;box-shadow:var(--shadow);transition:transform .1s,opacity .2s}
-  button:active{transform:scale(.96)}
-  button:disabled{opacity:.4;cursor:default}
-  .recycle{background:linear-gradient(135deg,#8bb174,#6f9a5c)}
-  .sell{background:linear-gradient(135deg,#e8a87c,#d98a5c)}
-  .full-note{grid-column:1/-1;text-align:center;font-size:12px;color:var(--sub);margin-top:-2px}
-
-  /* collection book */
-  .book{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;
-    padding:12px 14px;box-shadow:var(--shadow)}
-  .book h2{font-size:13px;margin:0 0 10px;color:var(--sub);letter-spacing:.3px}
-  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-  .cell{aspect-ratio:1;border-radius:12px;background:#f6efe1;display:flex;align-items:center;
-    justify-content:center;font-size:20px;position:relative;filter:grayscale(1);opacity:.35}
-  .cell.owned{filter:none;opacity:1;background:#fff5e6}
-  .cell .n{position:absolute;bottom:2px;right:4px;font-size:9px;color:var(--sub);font-weight:700}
-
-  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-size:13px;font-weight:600;
-    opacity:0;transition:.3s;pointer-events:none;z-index:50;box-shadow:var(--shadow)}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .roleplay{font-style:italic}
+  /* controls */
+  .controls{display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;gap:10px}
+  .dpad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:4px}
+  .dpad button{border:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    font-size:18px;color:var(--ink);box-shadow:var(--shadow);cursor:pointer;font-family:inherit}
+  .dpad button:active{background:#f2e9da;transform:scale(.94)}
+  .dpad .sp{visibility:hidden}
+  .log{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 10px;
+    box-shadow:var(--shadow);max-height:100px;overflow:hidden}
+  .log h2{font-size:10px;margin:0 0 6px;color:var(--sub)}
+  .loggrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+  .lcell{aspect-ratio:1;border-radius:8px;background:#f4ecdd;display:flex;align-items:center;justify-content:center;
+    font-size:15px;filter:grayscale(1);opacity:.35}
+  .lcell.owned{filter:none;opacity:1;background:#fff5e6}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <h1>Cozy Collector<small>톡톡 모으는 힐링 게임</small></h1>
-    <div class="coins">🪙 <span id="coins">0</span></div>
+    <h1>오리의 마을 산책<small>부산의 아늑한 동네에서 숨은 물건 찾기</small></h1>
+    <div class="count">🧺 <span id="count">0</span>/<span id="total">0</span></div>
   </header>
 
-  <div class="field" id="field">
-    <div class="hint" id="hint">떨어지는 아이템을 톡! 눌러 모아보세요<br>같은 종류만 상자에 채워집니다</div>
+  <div class="stage" id="stage">
+    <canvas id="cv"></canvas>
+    <div class="bubble" id="bubble"></div>
+    <div class="banner" id="banner"></div>
+    <div class="hint" id="hint">화면을 눌러 걸어가거나, 아래 방향키를 사용하세요</div>
   </div>
 
-  <div class="target">
-    <div class="emoji" id="tEmoji">🫙</div>
-    <div class="meta">
-      <div class="name" id="tName">준비 중…</div>
-      <div class="bar"><div class="fill" id="tFill"></div></div>
-      <div class="count" id="tCount">0 / 0</div>
+  <div class="controls">
+    <div class="dpad">
+      <span class="sp"></span><button data-dir="up">▲</button><span class="sp"></span>
+      <button data-dir="left">◀</button><span class="sp"></span><button data-dir="right">▶</button>
+      <span class="sp"></span><button data-dir="down">▼</button><span class="sp"></span>
+    </div>
+    <div class="log">
+      <h2 id="logTitle">📖 수집 도감</h2>
+      <div class="loggrid" id="loggrid"></div>
     </div>
   </div>
-
-  <div class="actions">
-    <button class="recycle" id="btnRecycle" disabled>♻️ 재활용하기</button>
-    <button class="sell" id="btnSell" disabled>💰 판매하기</button>
-    <div class="full-note" id="fullNote">상자를 가득 채우면 버튼이 열려요</div>
-  </div>
-
-  <div class="book">
-    <h2 id="bookTitle">📖 수집 도감 · 0/? 종</h2>
-    <div class="grid" id="grid"></div>
-  </div>
 </div>
-<div class="toast" id="toast"></div>
 
 <script>
-const ITEMS = [
-  {e:"🔵",name:"구슬"},   {e:"🍶",name:"빈 병"}, {e:"🍎",name:"사과"},
-  {e:"👕",name:"파란 티셔츠"}, {e:"🔘",name:"단추"}, {e:"🍋",name:"레몬"},
-  {e:"🌰",name:"도토리"}, {e:"🐚",name:"조개"},   {e:"🧩",name:"퍼즐 조각"},
-  {e:"⭐",name:"별 조각"}, {e:"🍄",name:"버섯"},   {e:"🪶",name:"깃털"},
-];
-const GOAL = 12;                 // 상자 하나 채우는 개수
-const SAVE = "cozy_collector_v1";
-
-let state = load();
-function load(){
-  try{const s=JSON.parse(localStorage.getItem(SAVE));
-    if(s&&s.discovered) return s;}catch(e){}
-  return {coins:0, current:pick(), have:0, discovered:{}};
-}
-function save(){localStorage.setItem(SAVE, JSON.stringify(state));}
-function pick(){return Math.floor(Math.random()*ITEMS.length);}
-
+const SAVE="cozy_collector_v2";
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
 const $=id=>document.getElementById(id);
-const field=$("field");
 
-function render(){
-  const it=ITEMS[state.current];
-  $("coins").textContent=state.coins;
-  $("tEmoji").textContent=it.e;
-  $("tName").textContent=it.name+" 모으는 중";
-  $("tFill").style.width=Math.min(100,state.have/GOAL*100)+"%";
-  $("tCount").textContent=state.have+" / "+GOAL;
-  const full=state.have>=GOAL;
-  $("btnRecycle").disabled=!full;
-  $("btnSell").disabled=!full;
-  $("fullNote").textContent=full?"상자가 가득 찼어요! 비우고 새 아이템으로 →":"상자를 가득 채우면 버튼이 열려요";
-  // book
-  const grid=$("grid");grid.innerHTML="";
-  let owned=0;
-  ITEMS.forEach((x,i)=>{
-    const c=document.createElement("div");
-    const cnt=state.discovered[i]||0;
-    c.className="cell"+(cnt?" owned":"");
-    c.innerHTML=x.e+(cnt?`<span class="n">×${cnt}</span>`:"");
-    c.title=x.name;
-    grid.appendChild(c);
-    if(cnt)owned++;
-  });
-  $("bookTitle").textContent=`📖 수집 도감 · ${owned}/${ITEMS.length} 종`;
+/* ---------- 월드 정의 ---------- */
+const WORLD_W=1600, WORLD_H=1200;
+// 구역: 부산 동네 테마
+const REGIONS=[
+  {name:"남천동 주택가", x:0,   y:0,   w:800, h:600, tint:"#e9f3d8"},
+  {name:"망미동 골목",   x:800, y:0,   w:800, h:600, tint:"#f3ece0"},
+  {name:"해운대 아파트 단지", x:0, y:600, w:900, h:600, tint:"#dfeaf2"},
+  {name:"해운대 바닷가", x:900,y:600, w:700, h:600, tint:"#cfe4ef"},
+];
+// 고정 장식 (emoji, 좌표)
+const DECOR=[
+  // 남천동 주택가: 아담한 집 + 나무 + 꽃
+  ["🏠",120,140],["🏠",300,110],["🏡",520,160],["🏠",660,120],
+  ["🌳",210,300],["🌳",430,330],["🌲",600,300],["🌷",160,240],["🌻",380,230],["🌸",560,250],
+  ["🚲",260,420],["🪧",470,430],["🌳",120,480],["🌷",700,360],
+  // 망미동 골목: 작은 가게, 골목, 가로등
+  ["🏪",900,130],["🏬",1120,120],["☕",1300,150],["🏠",1480,140],
+  ["🏮",980,260],["🌳",1080,330],["🪴",1220,280],["🚏",1380,300],["🌳",1500,360],
+  ["🐈",1040,430],["🪟",1180,430],["🧺",1320,420],
+  // 해운대 단지: 아파트, 놀이터
+  ["🏢",120,720],["🏢",280,700],["🏢",440,720],["🏢",620,700],["🏢",780,720],
+  ["🛝",200,900],["🌳",380,930],["⛲",560,910],["🌳",720,940],["🌷",120,1000],["🌸",840,980],
+  // 바닷가
+  ["🏖️",1050,760],["⛱️",1230,800],["🐚",1120,980],["🌊",1000,1120],["🌊",1180,1140],["🌊",1360,1120],
+  ["🚤",1420,900],["🪁",1300,700],
+];
+// 숨은 아이템 (덤불 뒤 hidden 은 가까이 가면 나타남)
+const ITEM_DEFS=[
+  {e:"🔵",name:"구슬"},{e:"🍶",name:"빈 병"},{e:"🍎",name:"사과"},{e:"👕",name:"파란 티셔츠"},
+  {e:"🔘",name:"단추"},{e:"🍋",name:"레몬"},{e:"🌰",name:"도토리"},{e:"🐚",name:"조개"},
+  {e:"🧩",name:"퍼즐 조각"},{e:"⭐",name:"별 조각"},{e:"🍄",name:"버섯"},{e:"🪶",name:"깃털"},
+];
+const ITEMS=[
+  {t:0,x:180,y:200,hidden:true},{t:2,x:560,y:130,hidden:false},{t:4,x:340,y:470,hidden:true},
+  {t:6,x:640,y:420,hidden:false},{t:10,x:250,y:350,hidden:true},
+  {t:1,x:960,y:180,hidden:false},{t:3,x:1240,y:210,hidden:true},{t:8,x:1100,y:400,hidden:false},
+  {t:5,x:1420,y:250,hidden:true},{t:11,x:1340,y:470,hidden:false},
+  {t:9,x:300,y:820,hidden:true},{t:2,x:620,y:980,hidden:false},{t:0,x:820,y:880,hidden:true},
+  {t:6,x:180,y:1080,hidden:false},
+  {t:7,x:1120,y:920,hidden:false},{t:7,x:1320,y:1020,hidden:true},{t:9,x:1440,y:820,hidden:false},
+  {t:3,x:1050,y:1080,hidden:true},
+];
+const NPCS=[
+  {e:"🐱",x:420,y:260,lines:["여긴 남천동, 바다도 가깝고 살기 좋데이~","골목마다 화분이 참 예쁘지 냥?"]},
+  {e:"🐰",x:1160,y:320,lines:["망미동 골목은 조용하고 아늑해!","숨은 물건은 덤불 근처를 잘 봐 봐~"]},
+  {e:"🦝",x:520,y:1000,lines:["해운대 단지 화단에 뭔가 반짝이던데?","밤에 산책하면 별이 잘 보인다구."]},
+  {e:"🐢",x:1150,y:1040,lines:["천천히 걸어도 괜찮아. 여긴 평온하니까.","파도 소리 들으면 마음이 놓여~"]},
+  {e:"🦊",x:900,y:520,lines:["오늘도 산책 나왔구나, 반가워!","다 모으면 함께 노을 보러 가자."]},
+];
+
+/* ---------- 상태 ---------- */
+let state=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(SAVE));if(s&&s.found)return s;}catch(e){}
+  return {found:{}, foundTypes:{}};}
+function save(){localStorage.setItem(SAVE,JSON.stringify(state));}
+// 이미 주운 아이템 복원
+ITEMS.forEach((it,i)=>{it.got=!!state.found[i];});
+
+const duck={x:400,y:300,dir:1,tx:null,ty:null};
+const keys={};
+let cam={x:0,y:0};
+
+/* ---------- 캔버스 크기 ---------- */
+let DPR=Math.min(2,window.devicePixelRatio||1), VW=0, VH=0;
+function resize(){
+  const r=document.getElementById("stage").getBoundingClientRect();
+  VW=r.width; VH=r.height;
+  cv.width=VW*DPR; cv.height=VH*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
 }
+window.addEventListener("resize",resize);
 
-function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
+/* ---------- 입력 ---------- */
+addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;duck.tx=null;});
+addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false;});
+document.querySelectorAll(".dpad button").forEach(b=>{
+  const d=b.dataset.dir;
+  const set=v=>{const k={up:"arrowup",down:"arrowdown",left:"arrowleft",right:"arrowright"}[d];keys[k]=v;duck.tx=null;};
+  b.addEventListener("pointerdown",e=>{e.preventDefault();set(true);});
+  b.addEventListener("pointerup",e=>{e.preventDefault();set(false);});
+  b.addEventListener("pointerleave",()=>set(false));
+});
+cv.addEventListener("pointerdown",e=>{
+  const r=cv.getBoundingClientRect();
+  duck.tx=(e.clientX-r.left)+cam.x; duck.ty=(e.clientY-r.top)+cam.y;
+  $("hint").style.display="none";
+});
 
-// spawn falling items
-function spawn(){
-  const isTarget=Math.random()<0.62;              // 62% 목표 아이템, 나머지 방해요소
-  const idx=isTarget?state.current:pick();
-  const el=document.createElement("div");
-  el.className="drop";
-  el.textContent=ITEMS[idx].e;
-  const w=field.clientWidth, h=field.clientHeight;
-  const x=Math.random()*(w-50)+8;
-  const y=Math.random()*(h-90)+8;
-  el.style.left=x+"px";
-  el.style.top=y+"px";
-  el.style.animationDuration=(0.3+Math.random()*0.3)+"s";
-  let alive=true;
-  const kill=()=>{if(alive){alive=false;el.remove();}};
-  el.addEventListener("pointerdown",e=>{
-    e.preventDefault();
-    if(!alive)return;
-    if(idx===state.current){
-      state.have=Math.min(GOAL,state.have+1);
-      showPop(x,y,"+1");
-    }else{
-      state.coins=Math.max(0,state.coins+1);   // 방해요소는 잡동사니 → 소소한 코인
-      showPop(x,y,"🪙");
-    }
-    $("hint").style.display="none";
-    kill();save();render();
-  },{passive:false});
-  field.appendChild(el);
-  setTimeout(kill, 2600);                          // 안 누르면 사라짐
-}
-function showPop(x,y,txt){
-  const p=document.createElement("div");p.className="pop";p.textContent=txt;
-  p.style.left=x+"px";p.style.top=y+"px";field.appendChild(p);
-  setTimeout(()=>p.remove(),700);
-}
+/* ---------- 배너/버블 ---------- */
+let bannerT;
+function banner(msg){const b=$("banner");b.textContent=msg;b.classList.add("show");
+  clearTimeout(bannerT);bannerT=setTimeout(()=>b.classList.remove("show"),1600);}
 
-function finishBox(mode){
-  if(state.have<GOAL)return;
-  const it=ITEMS[state.current];
-  state.discovered[state.current]=(state.discovered[state.current]||0)+1;
-  if(mode==="sell"){
-    const gain=GOAL*3+Math.floor(Math.random()*8);
-    state.coins+=gain;
-    toast(`💰 "${it.name} ${GOAL}개, 한 상자에 ${gain}코인!" 판매 완료`);
-  }else{
-    const gain=Math.floor(GOAL*1.5);
-    state.coins+=gain;
-    toast(`♻️ ${it.name} ${GOAL}개를 곱게 재활용했어요 (+${gain})`);
+/* ---------- 게임 루프 ---------- */
+const SPEED=2.6, REVEAL=90, PICK=42, NPC_R=70;
+function update(){
+  let vx=0,vy=0;
+  if(keys["arrowup"]||keys["w"])vy-=1;
+  if(keys["arrowdown"]||keys["s"])vy+=1;
+  if(keys["arrowleft"]||keys["a"])vx-=1;
+  if(keys["arrowright"]||keys["d"])vx+=1;
+  if((vx||vy)){duck.tx=null;}
+  else if(duck.tx!=null){ // tap-to-move
+    const dx=duck.tx-duck.x, dy=duck.ty-duck.y, d=Math.hypot(dx,dy);
+    if(d>4){vx=dx/d;vy=dy/d;} else {duck.tx=null;}
   }
-  state.have=0;
-  state.current=pick();
-  save();render();
+  const len=Math.hypot(vx,vy)||1; vx/=len; vy/=len;
+  duck.x=Math.max(20,Math.min(WORLD_W-20,duck.x+vx*SPEED));
+  duck.y=Math.max(20,Math.min(WORLD_H-20,duck.y+vy*SPEED));
+  if(vx<0)duck.dir=-1; else if(vx>0)duck.dir=1;
+
+  // camera
+  cam.x=Math.max(0,Math.min(WORLD_W-VW,duck.x-VW/2));
+  cam.y=Math.max(0,Math.min(WORLD_H-VH,duck.y-VH/2));
+
+  // item pickup
+  ITEMS.forEach((it,i)=>{
+    if(it.got)return;
+    const d=Math.hypot(it.x-duck.x,it.y-duck.y);
+    it.revealed = !it.hidden || d<REVEAL;
+    if(d<PICK){
+      it.got=true; state.found[i]=true; state.foundTypes[it.t]=(state.foundTypes[it.t]||0)+1;
+      save(); renderLog();
+      banner(`${ITEM_DEFS[it.t].e} ${ITEM_DEFS[it.t].name} 발견!`);
+      if(Object.keys(state.found).length>=ITEMS.length){
+        setTimeout(()=>banner("🎉 마을 산책 완료! 모두 찾았어요"),1200);
+      }
+    }
+  });
+
+  // NPC proximity → bubble
+  let near=null,nd=1e9;
+  NPCS.forEach(n=>{const d=Math.hypot(n.x-duck.x,n.y-duck.y);if(d<NPC_R&&d<nd){nd=d;near=n;}});
+  const bub=$("bubble");
+  if(near){
+    if(near._line==null||near._t!==near){near._line=Math.floor(Math.random()*near.lines.length);near._t=near;}
+    bub.textContent=near.lines[near._line];
+    bub.style.left=(near.x-cam.x)+"px"; bub.style.top=(near.y-cam.y-24)+"px";
+    bub.classList.add("show");
+  } else {bub.classList.remove("show"); NPCS.forEach(n=>n._line=null);}
 }
 
-$("btnSell").addEventListener("click",()=>finishBox("sell"));
-$("btnRecycle").addEventListener("click",()=>finishBox("recycle"));
+function emoji(e,x,y,size){ctx.font=size+"px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(e,x,y);}
+function draw(){
+  ctx.clearRect(0,0,VW,VH);
+  // ground base
+  ctx.fillStyle="#d7ecc9"; ctx.fillRect(0,0,VW,VH);
+  // regions
+  REGIONS.forEach(r=>{
+    const sx=r.x-cam.x, sy=r.y-cam.y;
+    ctx.fillStyle=r.tint; ctx.fillRect(sx,sy,r.w,r.h);
+  });
+  // sea waves accent (rightbottom region)
+  // soft path grid
+  ctx.strokeStyle="rgba(180,160,120,.18)";ctx.lineWidth=1;
+  for(let gx=0;gx<WORLD_W;gx+=100){const x=gx-cam.x;if(x>-2&&x<VW){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,VH);ctx.stroke();}}
+  for(let gy=0;gy<WORLD_H;gy+=100){const y=gy-cam.y;if(y>-2&&y<VH){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(VW,y);ctx.stroke();}}
+  // region labels
+  REGIONS.forEach(r=>{
+    const sx=r.x-cam.x+16, sy=r.y-cam.y+28;
+    if(sx>-160&&sx<VW&&sy>-20&&sy<VH+20){
+      ctx.font="bold 14px sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";
+      ctx.fillStyle="rgba(75,66,53,.45)";ctx.fillText(r.name,sx,sy);
+    }
+  });
+  // decor
+  DECOR.forEach(d=>{const x=d[1]-cam.x,y=d[2]-cam.y;if(x>-40&&x<VW+40&&y>-40&&y<VH+40)emoji(d[0],x,y,34);});
+  // items
+  ITEMS.forEach(it=>{
+    if(it.got)return;const x=it.x-cam.x,y=it.y-cam.y;if(x<-40||x>VW+40||y<-40||y>VH+40)return;
+    if(it.revealed){ // little glow
+      ctx.beginPath();ctx.fillStyle="rgba(255,230,150,.5)";ctx.arc(x,y,16,0,7);ctx.fill();
+      emoji(ITEM_DEFS[it.t].e,x,y,24);
+    } else { emoji("🍃",x,y,28); }
+  });
+  // NPCs
+  NPCS.forEach(n=>{const x=n.x-cam.x,y=n.y-cam.y;if(x>-40&&x<VW+40&&y>-40&&y<VH+40)emoji(n.e,x,y,32);});
+  // duck (player)
+  const dx=duck.x-cam.x,dy=duck.y-cam.y;
+  ctx.save();ctx.translate(dx,dy);if(duck.dir<0)ctx.scale(-1,1);
+  ctx.beginPath();ctx.fillStyle="rgba(0,0,0,.12)";ctx.ellipse(0,16,15,6,0,0,7);ctx.fill();
+  emoji("🐤",0,0,34);ctx.restore();
+}
+function loop(){update();draw();requestAnimationFrame(loop);}
 
-render();
-// 지속적으로 아이템이 떨어지게
-setInterval(()=>{ if(field.querySelectorAll('.drop').length<6) spawn(); }, 750);
-spawn();
+/* ---------- 도감 ---------- */
+function renderLog(){
+  const g=$("loggrid");g.innerHTML="";let owned=0;
+  ITEM_DEFS.forEach((x,i)=>{
+    const c=document.createElement("div");const has=state.foundTypes[i];
+    c.className="lcell"+(has?" owned":"");c.textContent=x.e;c.title=x.name;g.appendChild(c);if(has)owned++;
+  });
+  $("logTitle").textContent=`📖 수집 도감 · ${owned}/${ITEM_DEFS.length}종`;
+  $("count").textContent=Object.keys(state.found).length;
+  $("total").textContent=ITEMS.length;
+}
+
+/* ---------- 시작 ---------- */
+resize();renderLog();loop();
 </script>
 </body>
 </html>

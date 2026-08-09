@@ -24,22 +24,27 @@
   .star{position:absolute;background:#fff;border-radius:50%;opacity:.5;animation:tw 4s infinite}
   @keyframes tw{0%,100%{opacity:.15}50%{opacity:.7}}
   .app{position:relative;z-index:1;width:100%;max-width:460px;min-height:100dvh;
-    display:flex;flex-direction:column;align-items:center;padding:26px 18px 30px;text-align:center}
+    display:flex;flex-direction:column;align-items:center;padding:22px 18px 30px;text-align:center}
   h1{font-size:22px;margin:0 0 2px;font-weight:700;letter-spacing:-.3px}
-  .tag{color:var(--sub);font-size:13px;margin-bottom:22px}
-  .koala{font-size:70px;margin:6px 0 4px;transition:transform 4s ease-in-out;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4))}
-  body.dim .koala{transform:scale(.9)}
+  .tag{color:var(--sub);font-size:13px;margin-bottom:14px}
+
+  /* koala illustration */
+  .koala{flex:none;display:block;width:150px;height:150px;margin:2px auto;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));transition:transform 4s ease-in-out}
+  body.dim .koala{transform:scale(.94)}
+  .zzz{animation:floatz 3.4s ease-in-out infinite;transform-origin:center;opacity:.85}
+  @keyframes floatz{0%{transform:translateY(0);opacity:.3}50%{transform:translateY(-6px);opacity:.9}100%{transform:translateY(-12px);opacity:0}}
+  .breathbelly{transform-origin:center;animation:belly 11s ease-in-out infinite}
+  @keyframes belly{0%{transform:scale(1)}36%{transform:scale(1.05)}50%{transform:scale(1.05)}86%{transform:scale(1)}100%{transform:scale(1)}}
 
   /* breathing orb */
-  .orb-wrap{margin:10px 0 6px;position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center}
-  .orb{width:120px;height:120px;border-radius:50%;
+  .orb-wrap{margin:8px 0 4px;position:relative;width:210px;height:210px;display:flex;align-items:center;justify-content:center}
+  .orb{width:110px;height:110px;border-radius:50%;
     background:radial-gradient(circle at 35% 30%,var(--accent2),var(--accent));
     box-shadow:0 0 60px rgba(143,168,255,.5);}
-  .orb-wrap.run .orb{animation:breathe var(--cycle,11s) ease-in-out infinite}
+  .orb-wrap.run .orb{animation:breathe 11s ease-in-out infinite}
   @keyframes breathe{
-    0%{transform:scale(.62)} 36%{transform:scale(1.15)}   /* 들이쉬기 4s */
-    50%{transform:scale(1.15)}                             /* 멈춤 ~1.5s */
-    86%{transform:scale(.62)} 100%{transform:scale(.62)}  /* 내쉬기 6s */
+    0%{transform:scale(.62)} 36%{transform:scale(1.15)}
+    50%{transform:scale(1.15)} 86%{transform:scale(.62)} 100%{transform:scale(.62)}
   }
   .breath-txt{position:absolute;font-size:15px;font-weight:600;color:#fff;letter-spacing:1px}
 
@@ -53,6 +58,15 @@
   .snd small{display:block;font-size:10px;margin-top:5px;color:var(--sub)}
   .snd.on{background:rgba(143,168,255,.22);border-color:var(--accent);box-shadow:0 0 16px rgba(143,168,255,.3)}
   .snd.on small{color:var(--ink)}
+  .snd .src{position:absolute;top:5px;right:7px;font-size:8px;color:var(--sub)}
+
+  /* brainwave */
+  .waves{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .wv{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;
+    padding:12px;cursor:pointer;transition:.2s;text-align:left}
+  .wv b{font-size:14px} .wv small{display:block;font-size:10px;color:var(--sub);margin-top:3px}
+  .wv.on{background:rgba(200,163,255,.22);border-color:var(--accent2);box-shadow:0 0 16px rgba(200,163,255,.3)}
+  .headnote{font-size:10px;color:var(--sub);margin-top:10px;text-align:left;line-height:1.5}
 
   .row{display:flex;align-items:center;gap:12px}
   input[type=range]{flex:1;accent-color:var(--accent)}
@@ -73,7 +87,57 @@
 <body>
 <div class="stars" id="stars"></div>
 <div class="app">
-  <div class="koala">🐨</div>
+  <!-- 오리지널 SVG: 나무에 기대어 조는 코알라 (copyright-free, 직접 제작) -->
+  <svg class="koala" width="150" height="150" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-label="졸고 있는 코알라">
+    <defs>
+      <radialGradient id="moon" cx="50%" cy="40%" r="60%">
+        <stop offset="0" stop-color="#fdf6d8"/><stop offset="1" stop-color="#e9dfae"/>
+      </radialGradient>
+      <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#c3c9d6"/><stop offset="1" stop-color="#9aa2b8"/>
+      </linearGradient>
+      <linearGradient id="bark" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#7a6a58"/><stop offset="1" stop-color="#5f5142"/>
+      </linearGradient>
+    </defs>
+    <!-- moon glow -->
+    <circle cx="150" cy="52" r="30" fill="url(#moon)" opacity=".9"/>
+    <circle cx="140" cy="46" r="26" fill="#10162e"/>
+    <!-- tree trunk -->
+    <rect x="30" y="70" width="34" height="120" rx="14" fill="url(#bark)"/>
+    <path d="M47 80 q6 30 0 100" stroke="#4b4032" stroke-width="3" fill="none" opacity=".5"/>
+    <ellipse cx="60" cy="150" rx="60" ry="16" fill="#0a0e1f" opacity=".35"/>
+    <!-- koala body leaning on trunk -->
+    <g transform="translate(6,6)">
+      <!-- body -->
+      <path class="breathbelly" d="M70 150 q-14 -46 22 -70 q40 -26 66 6 q22 30 2 62 q-16 24 -50 22 q-30 -2 -40 -20z" fill="url(#fur)"/>
+      <!-- belly patch -->
+      <ellipse cx="112" cy="132" rx="30" ry="30" fill="#eef1f7" opacity=".85"/>
+      <!-- arm hugging trunk -->
+      <path d="M78 128 q-20 4 -30 20 q10 6 24 0 q10 -6 14 -14z" fill="#aab1c4"/>
+      <!-- head -->
+      <circle cx="110" cy="92" r="42" fill="url(#fur)"/>
+      <!-- ears (fluffy) -->
+      <circle cx="74" cy="74" r="22" fill="#b6bccd"/><circle cx="74" cy="74" r="13" fill="#e7c9d6"/>
+      <circle cx="146" cy="74" r="22" fill="#b6bccd"/><circle cx="146" cy="74" r="13" fill="#e7c9d6"/>
+      <!-- cheeks -->
+      <circle cx="86" cy="102" r="10" fill="#f4b8c6" opacity=".7"/>
+      <circle cx="134" cy="102" r="10" fill="#f4b8c6" opacity=".7"/>
+      <!-- sleepy closed eyes -->
+      <path d="M84 92 q9 8 18 0" stroke="#4b4f5e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <path d="M118 92 q9 8 18 0" stroke="#4b4f5e" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <!-- nose -->
+      <ellipse cx="110" cy="106" rx="13" ry="10" fill="#5a5f6e"/>
+      <ellipse cx="110" cy="103" rx="5" ry="3" fill="#7c8290" opacity=".7"/>
+    </g>
+    <!-- Zzz -->
+    <g fill="#dfe6ff" font-family="sans-serif" font-weight="700">
+      <text class="zzz" x="150" y="70" font-size="14" style="animation-delay:0s">z</text>
+      <text class="zzz" x="160" y="58" font-size="18" style="animation-delay:1.1s">Z</text>
+      <text class="zzz" x="172" y="44" font-size="23" style="animation-delay:2.2s">Z</text>
+    </g>
+  </svg>
+
   <h1>Sleepy Koala</h1>
   <div class="tag">호흡을 따라가며 스르르 잠들어요</div>
 
@@ -85,14 +149,25 @@
   <div class="card">
     <h2>🎧 앰비언트 사운드</h2>
     <div class="sounds" id="sounds">
-      <div class="snd" data-s="rain">🌧️<small>비</small></div>
-      <div class="snd" data-s="waves">🌊<small>파도</small></div>
-      <div class="snd" data-s="wind">🍃<small>바람</small></div>
-      <div class="snd" data-s="fire">🔥<small>모닥불</small></div>
+      <div class="snd" data-s="rain">🌧️<small>비</small><span class="src" data-src="rain"></span></div>
+      <div class="snd" data-s="waves">🌊<small>파도</small><span class="src" data-src="waves"></span></div>
+      <div class="snd" data-s="wind">🍃<small>바람</small><span class="src" data-src="wind"></span></div>
+      <div class="snd" data-s="fire">🔥<small>모닥불</small><span class="src" data-src="fire"></span></div>
     </div>
     <div class="row" style="margin-top:14px">
       🔉<input type="range" id="vol" min="0" max="100" value="55">
     </div>
+  </div>
+
+  <div class="card">
+    <h2>🧠 명상 뇌파 · 힐링 주파수</h2>
+    <div class="waves" id="waves">
+      <div class="wv" data-w="delta"><b>델타파</b><small>0.5–4Hz · 깊은 수면</small></div>
+      <div class="wv" data-w="theta"><b>세타파</b><small>4–8Hz · 깊은 이완</small></div>
+      <div class="wv" data-w="alpha"><b>알파파</b><small>8–13Hz · 심신 안정</small></div>
+      <div class="wv" data-w="heal432"><b>432Hz</b><small>치유 주파수</small></div>
+    </div>
+    <div class="headnote">※ 델타·세타·알파는 좌우 귀 주파수 차로 만드는 <b>바이노럴 비트</b>라 <b>이어폰 착용</b> 시 효과가 있습니다. 432Hz는 스피커로도 들려요.</div>
   </div>
 
   <div class="card">
@@ -107,7 +182,7 @@
   </div>
 
   <button class="play" id="play">▶ 수면 세션 시작</button>
-  <div class="foot">화면을 어둡게 유지하고, 호흡 원이 커질 때 들이쉬고<br>작아질 때 천천히 내쉬세요 · 사운드는 실시간 합성음입니다</div>
+  <div class="foot">화면을 어둡게 유지하고, 호흡 원이 커질 때 들이쉬고<br>작아질 때 천천히 내쉬세요</div>
 </div>
 
 <script>
@@ -118,31 +193,55 @@
     d.style.left=Math.random()*100+"%";d.style.top=Math.random()*70+"%";
     d.style.animationDelay=Math.random()*4+"s";s.appendChild(d);}})();
 
-/* ---------- Web Audio: 실시간 노이즈/사운드 합성 ---------- */
-let ctx, master, active={};
+/* ---------- Web Audio ---------- */
+let ctx, master, active={}, waveActive=null, fileBuffers={}, fileChecked=false;
+const SND_TYPES=["rain","waves","wind","fire"];
+
 function ensureCtx(){
   if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();
     master=ctx.createGain();master.gain.value=0.55;master.connect(ctx.destination);}
   if(ctx.state==="suspended")ctx.resume();
 }
+
+/* 사용자 제공 오디오 파일이 sounds/<type>.mp3 로 있으면 우선 사용, 없으면 합성음 폴백 */
+async function preloadFiles(){
+  if(fileChecked)return; fileChecked=true;
+  await Promise.all(SND_TYPES.map(async t=>{
+    for(const ext of ["mp3","ogg","wav","m4a"]){
+      try{
+        const r=await fetch(`sounds/${t}.${ext}`,{cache:"force-cache"});
+        if(!r.ok) continue;
+        const ab=await r.arrayBuffer();
+        fileBuffers[t]=await ctx.decodeAudioData(ab);
+        break;
+      }catch(e){/* 파일 없음 → 폴백 */}
+    }
+    const badge=document.querySelector(`.src[data-src="${t}"]`);
+    if(badge) badge.textContent = fileBuffers[t] ? "파일" : "";
+  }));
+}
+
 function noiseBuffer(){
   const len=ctx.sampleRate*2;const buf=ctx.createBuffer(1,len,ctx.sampleRate);
   const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;return buf;
 }
-function makeSound(type){
+function playFile(type){
+  const src=ctx.createBufferSource();src.buffer=fileBuffers[type];src.loop=true;
+  const g=ctx.createGain();g.gain.value=0.9;src.connect(g);g.connect(master);src.start();
+  return {src,g,extra:[]};
+}
+function makeSynth(type){
   const src=ctx.createBufferSource();src.buffer=noiseBuffer();src.loop=true;
-  const filt=ctx.createBiquadFilter();const g=ctx.createGain();
+  const filt=ctx.createBiquadFilter();const g=ctx.createGain();const extra=[];
   src.connect(filt);filt.connect(g);g.connect(master);
   if(type==="rain"){filt.type="highpass";filt.frequency.value=1000;g.gain.value=0.5;}
   else if(type==="waves"){filt.type="lowpass";filt.frequency.value=550;g.gain.value=0.9;
-    // 파도 물결: LFO로 볼륨 출렁
     const lfo=ctx.createOscillator();const lg=ctx.createGain();
-    lfo.frequency.value=0.12;lg.gain.value=0.5;lfo.connect(lg);lg.connect(g.gain);lfo.start();src._lfo=lfo;}
+    lfo.frequency.value=0.12;lg.gain.value=0.5;lfo.connect(lg);lg.connect(g.gain);lfo.start();extra.push(lfo);}
   else if(type==="wind"){filt.type="lowpass";filt.frequency.value=420;g.gain.value=0.7;
     const lfo=ctx.createOscillator();const lg=ctx.createGain();
-    lfo.frequency.value=0.08;lg.gain.value=200;lfo.connect(lg);lg.connect(filt.frequency);lfo.start();src._lfo=lfo;}
+    lfo.frequency.value=0.08;lg.gain.value=200;lfo.connect(lg);lg.connect(filt.frequency);lfo.start();extra.push(lfo);}
   else if(type==="fire"){filt.type="lowpass";filt.frequency.value=800;g.gain.value=0.4;
-    // 탁탁 튀는 소리
     const crackle=setInterval(()=>{if(!ctx)return;const o=ctx.createOscillator();const og=ctx.createGain();
       o.frequency.value=200+Math.random()*400;o.connect(og);og.connect(master);
       og.gain.setValueAtTime(0.0,ctx.currentTime);
@@ -150,24 +249,53 @@ function makeSound(type){
       og.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
       o.start();o.stop(ctx.currentTime+0.09);},220);src._crackle=crackle;}
   src.start();
-  return {src,g};
+  return {src,g,extra};
 }
-function toggleSound(type,el){
+function stopNode(node){
+  if(!node)return;
+  try{node.src._crackle&&clearInterval(node.src._crackle);}catch(e){}
+  (node.extra||[]).forEach(o=>{try{o.stop();}catch(e){}});
+  try{node.src.stop();}catch(e){}
+}
+async function toggleSound(type,el){
+  ensureCtx();await preloadFiles();
+  if(active[type]){stopNode(active[type]);delete active[type];el.classList.remove("on");}
+  else{active[type]=fileBuffers[type]?playFile(type):makeSynth(type);el.classList.add("on");}
+}
+document.querySelectorAll(".snd").forEach(el=>el.addEventListener("click",()=>toggleSound(el.dataset.s,el)));
+document.getElementById("vol").addEventListener("input",e=>{if(master)master.gain.value=e.target.value/100;});
+
+/* ---------- 명상 뇌파 (바이노럴) + 432Hz ---------- */
+const BEATS={delta:2, theta:6, alpha:10};
+function makeBinaural(beatHz,carrier=200){
+  const merger=ctx.createChannelMerger(2);
+  const oscL=ctx.createOscillator(),oscR=ctx.createOscillator();
+  const gL=ctx.createGain(),gR=ctx.createGain();
+  gL.gain.value=gR.gain.value=0.18;
+  oscL.type=oscR.type="sine";
+  oscL.frequency.value=carrier; oscR.frequency.value=carrier+beatHz;
+  oscL.connect(gL).connect(merger,0,0);
+  oscR.connect(gR).connect(merger,0,1);
+  merger.connect(master);
+  oscL.start();oscR.start();
+  return {nodes:[oscL,oscR]};
+}
+function make432(){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type="sine";o.frequency.value=432;g.gain.value=0.14;
+  o.connect(g);g.connect(master);o.start();
+  return {nodes:[o]};
+}
+function stopWave(){if(waveActive){waveActive.obj.nodes.forEach(n=>{try{n.stop();}catch(e){}});
+  waveActive.el.classList.remove("on");waveActive=null;}}
+function toggleWave(kind,el){
   ensureCtx();
-  if(active[type]){
-    active[type].src._lfo&&active[type].src._lfo.stop();
-    active[type].src._crackle&&clearInterval(active[type].src._crackle);
-    active[type].src.stop();delete active[type];el.classList.remove("on");
-  }else{
-    active[type]=makeSound(type);el.classList.add("on");
-  }
+  if(waveActive&&waveActive.kind===kind){stopWave();return;}
+  stopWave();
+  const obj = kind==="heal432" ? make432() : makeBinaural(BEATS[kind]);
+  el.classList.add("on");waveActive={kind,obj,el};
 }
-document.querySelectorAll(".snd").forEach(el=>{
-  el.addEventListener("click",()=>toggleSound(el.dataset.s,el));
-});
-document.getElementById("vol").addEventListener("input",e=>{
-  if(master)master.gain.value=e.target.value/100;
-});
+document.querySelectorAll(".wv").forEach(el=>el.addEventListener("click",()=>toggleWave(el.dataset.w,el)));
 
 /* ---------- 호흡 가이드 ---------- */
 const orbWrap=document.getElementById("orbWrap");
@@ -175,7 +303,7 @@ const breathTxt=document.getElementById("breathTxt");
 let breathing=false, breathTimer;
 function startBreathing(){
   breathing=true;orbWrap.classList.add("run");
-  const cycle=11000; // 4s 들이 + 1.5s 멈춤 + 6s 내쉬 ≒ 11s (CSS와 맞춤)
+  const cycle=11000;
   const step=()=>{
     breathTxt.textContent="들이쉬기";
     setTimeout(()=>{if(breathing)breathTxt.textContent="잠깐 멈춤";},4000);
@@ -204,7 +332,7 @@ function armTimer(){
     const left=Math.max(0,endAt-Date.now());
     const m=Math.floor(left/60000),s=Math.floor(left%60000/1000);
     cd.textContent=`${m}:${String(s).padStart(2,"0")} 후 자동 종료`;
-    document.body.classList.toggle("dim",left<120000); // 마지막 2분 화면 어둡게
+    document.body.classList.toggle("dim",left<120000);
     if(left<=0){clearInterval(countdownInt);stopSession();}
   };
   tick();countdownInt=setInterval(tick,1000);
@@ -214,18 +342,14 @@ function armTimer(){
 let running=false;
 const playBtn=document.getElementById("play");
 function startSession(){
-  running=true;ensureCtx();startBreathing();armTimer();
-  document.body.classList.add("dim-soft");
+  running=true;ensureCtx();preloadFiles();startBreathing();armTimer();
   playBtn.textContent="⏸ 세션 멈추기";
 }
 function stopSession(){
   running=false;stopBreathing();clearInterval(countdownInt);
-  Object.keys(active).forEach(t=>{
-    active[t].src._lfo&&active[t].src._lfo.stop();
-    active[t].src._crackle&&clearInterval(active[t].src._crackle);
-    active[t].src.stop();
-  });
-  active={};document.querySelectorAll(".snd").forEach(e=>e.classList.remove("on"));
+  Object.keys(active).forEach(t=>stopNode(active[t]));active={};
+  document.querySelectorAll(".snd").forEach(e=>e.classList.remove("on"));
+  stopWave();
   document.body.classList.remove("dim");
   document.getElementById("countdown").textContent="";
   playBtn.textContent="▶ 수면 세션 시작";
