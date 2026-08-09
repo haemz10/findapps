@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#10162e">
+<title>Sleepy Koala · 수면 유도</title>
+<style>
+  :root{
+    --bg1:#10162e; --bg2:#1b2450; --ink:#e7ecff; --sub:#9aa6d6;
+    --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.12);
+    --accent:#8fa8ff; --accent2:#c8a3ff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    color:var(--ink);overflow-x:hidden;user-select:none;
+    background:radial-gradient(140% 100% at 50% 0%,#1b2450,var(--bg1));
+    display:flex;justify-content:center;transition:background 1.5s;
+  }
+  body.dim{background:radial-gradient(140% 100% at 50% 0%,#0a0e1f,#05070f)}
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .star{position:absolute;background:#fff;border-radius:50%;opacity:.5;animation:tw 4s infinite}
+  @keyframes tw{0%,100%{opacity:.15}50%{opacity:.7}}
+  .app{position:relative;z-index:1;width:100%;max-width:460px;min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;padding:26px 18px 30px;text-align:center}
+  h1{font-size:22px;margin:0 0 2px;font-weight:700;letter-spacing:-.3px}
+  .tag{color:var(--sub);font-size:13px;margin-bottom:22px}
+  .koala{font-size:70px;margin:6px 0 4px;transition:transform 4s ease-in-out;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4))}
+  body.dim .koala{transform:scale(.9)}
+
+  /* breathing orb */
+  .orb-wrap{margin:10px 0 6px;position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center}
+  .orb{width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,var(--accent2),var(--accent));
+    box-shadow:0 0 60px rgba(143,168,255,.5);}
+  .orb-wrap.run .orb{animation:breathe var(--cycle,11s) ease-in-out infinite}
+  @keyframes breathe{
+    0%{transform:scale(.62)} 36%{transform:scale(1.15)}   /* 들이쉬기 4s */
+    50%{transform:scale(1.15)}                             /* 멈춤 ~1.5s */
+    86%{transform:scale(.62)} 100%{transform:scale(.62)}  /* 내쉬기 6s */
+  }
+  .breath-txt{position:absolute;font-size:15px;font-weight:600;color:#fff;letter-spacing:1px}
+
+  .card{width:100%;background:var(--card);border:1px solid var(--line);border-radius:20px;
+    padding:16px;margin-top:14px;backdrop-filter:blur(6px)}
+  .card h2{font-size:13px;margin:0 0 12px;color:var(--sub);text-align:left;letter-spacing:.5px}
+
+  .sounds{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .snd{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;
+    padding:12px 4px;font-size:22px;cursor:pointer;transition:.2s;position:relative}
+  .snd small{display:block;font-size:10px;margin-top:5px;color:var(--sub)}
+  .snd.on{background:rgba(143,168,255,.22);border-color:var(--accent);box-shadow:0 0 16px rgba(143,168,255,.3)}
+  .snd.on small{color:var(--ink)}
+
+  .row{display:flex;align-items:center;gap:12px}
+  input[type=range]{flex:1;accent-color:var(--accent)}
+
+  .timer-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .tbtn{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);
+    border-radius:999px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+  .tbtn.on{background:var(--accent);color:#10162e;border-color:var(--accent)}
+  .countdown{margin-top:10px;font-size:13px;color:var(--sub)}
+
+  .play{margin-top:20px;width:100%;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:700;
+    font-family:inherit;color:#10162e;cursor:pointer;
+    background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:0 8px 24px rgba(143,168,255,.35);transition:transform .1s}
+  .play:active{transform:scale(.97)}
+  .foot{color:var(--sub);font-size:11px;margin-top:16px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="app">
+  <div class="koala">🐨</div>
+  <h1>Sleepy Koala</h1>
+  <div class="tag">호흡을 따라가며 스르르 잠들어요</div>
+
+  <div class="orb-wrap" id="orbWrap">
+    <div class="orb"></div>
+    <div class="breath-txt" id="breathTxt">시작을 눌러요</div>
+  </div>
+
+  <div class="card">
+    <h2>🎧 앰비언트 사운드</h2>
+    <div class="sounds" id="sounds">
+      <div class="snd" data-s="rain">🌧️<small>비</small></div>
+      <div class="snd" data-s="waves">🌊<small>파도</small></div>
+      <div class="snd" data-s="wind">🍃<small>바람</small></div>
+      <div class="snd" data-s="fire">🔥<small>모닥불</small></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      🔉<input type="range" id="vol" min="0" max="100" value="55">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⏱️ 슬립 타이머 (자동 종료)</h2>
+    <div class="timer-btns" id="timers">
+      <button class="tbtn" data-m="0">끄기</button>
+      <button class="tbtn" data-m="10">10분</button>
+      <button class="tbtn on" data-m="20">20분</button>
+      <button class="tbtn" data-m="45">45분</button>
+    </div>
+    <div class="countdown" id="countdown"></div>
+  </div>
+
+  <button class="play" id="play">▶ 수면 세션 시작</button>
+  <div class="foot">화면을 어둡게 유지하고, 호흡 원이 커질 때 들이쉬고<br>작아질 때 천천히 내쉬세요 · 사운드는 실시간 합성음입니다</div>
+</div>
+
+<script>
+/* ---------- 별 배경 ---------- */
+(function(){const s=document.getElementById("stars");
+  for(let i=0;i<50;i++){const d=document.createElement("div");d.className="star";
+    const sz=Math.random()*2+1;d.style.width=d.style.height=sz+"px";
+    d.style.left=Math.random()*100+"%";d.style.top=Math.random()*70+"%";
+    d.style.animationDelay=Math.random()*4+"s";s.appendChild(d);}})();
+
+/* ---------- Web Audio: 실시간 노이즈/사운드 합성 ---------- */
+let ctx, master, active={};
+function ensureCtx(){
+  if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain();master.gain.value=0.55;master.connect(ctx.destination);}
+  if(ctx.state==="suspended")ctx.resume();
+}
+function noiseBuffer(){
+  const len=ctx.sampleRate*2;const buf=ctx.createBuffer(1,len,ctx.sampleRate);
+  const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;return buf;
+}
+function makeSound(type){
+  const src=ctx.createBufferSource();src.buffer=noiseBuffer();src.loop=true;
+  const filt=ctx.createBiquadFilter();const g=ctx.createGain();
+  src.connect(filt);filt.connect(g);g.connect(master);
+  if(type==="rain"){filt.type="highpass";filt.frequency.value=1000;g.gain.value=0.5;}
+  else if(type==="waves"){filt.type="lowpass";filt.frequency.value=550;g.gain.value=0.9;
+    // 파도 물결: LFO로 볼륨 출렁
+    const lfo=ctx.createOscillator();const lg=ctx.createGain();
+    lfo.frequency.value=0.12;lg.gain.value=0.5;lfo.connect(lg);lg.connect(g.gain);lfo.start();src._lfo=lfo;}
+  else if(type==="wind"){filt.type="lowpass";filt.frequency.value=420;g.gain.value=0.7;
+    const lfo=ctx.createOscillator();const lg=ctx.createGain();
+    lfo.frequency.value=0.08;lg.gain.value=200;lfo.connect(lg);lg.connect(filt.frequency);lfo.start();src._lfo=lfo;}
+  else if(type==="fire"){filt.type="lowpass";filt.frequency.value=800;g.gain.value=0.4;
+    // 탁탁 튀는 소리
+    const crackle=setInterval(()=>{if(!ctx)return;const o=ctx.createOscillator();const og=ctx.createGain();
+      o.frequency.value=200+Math.random()*400;o.connect(og);og.connect(master);
+      og.gain.setValueAtTime(0.0,ctx.currentTime);
+      og.gain.linearRampToValueAtTime(0.15*Math.random(),ctx.currentTime+0.005);
+      og.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+      o.start();o.stop(ctx.currentTime+0.09);},220);src._crackle=crackle;}
+  src.start();
+  return {src,g};
+}
+function toggleSound(type,el){
+  ensureCtx();
+  if(active[type]){
+    active[type].src._lfo&&active[type].src._lfo.stop();
+    active[type].src._crackle&&clearInterval(active[type].src._crackle);
+    active[type].src.stop();delete active[type];el.classList.remove("on");
+  }else{
+    active[type]=makeSound(type);el.classList.add("on");
+  }
+}
+document.querySelectorAll(".snd").forEach(el=>{
+  el.addEventListener("click",()=>toggleSound(el.dataset.s,el));
+});
+document.getElementById("vol").addEventListener("input",e=>{
+  if(master)master.gain.value=e.target.value/100;
+});
+
+/* ---------- 호흡 가이드 ---------- */
+const orbWrap=document.getElementById("orbWrap");
+const breathTxt=document.getElementById("breathTxt");
+let breathing=false, breathTimer;
+function startBreathing(){
+  breathing=true;orbWrap.classList.add("run");
+  const cycle=11000; // 4s 들이 + 1.5s 멈춤 + 6s 내쉬 ≒ 11s (CSS와 맞춤)
+  const step=()=>{
+    breathTxt.textContent="들이쉬기";
+    setTimeout(()=>{if(breathing)breathTxt.textContent="잠깐 멈춤";},4000);
+    setTimeout(()=>{if(breathing)breathTxt.textContent="내쉬기";},5500);
+  };
+  step();breathTimer=setInterval(step,cycle);
+}
+function stopBreathing(){breathing=false;orbWrap.classList.remove("run");
+  clearInterval(breathTimer);breathTxt.textContent="시작을 눌러요";}
+
+/* ---------- 타이머 ---------- */
+let timerMin=20, countdownInt, endAt=0;
+document.querySelectorAll("#timers .tbtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll("#timers .tbtn").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");timerMin=+b.dataset.m;
+    if(running)armTimer();
+  });
+});
+function armTimer(){
+  clearInterval(countdownInt);
+  const cd=document.getElementById("countdown");
+  if(timerMin===0){cd.textContent="자동 종료 없음";return;}
+  endAt=Date.now()+timerMin*60000;
+  const tick=()=>{
+    const left=Math.max(0,endAt-Date.now());
+    const m=Math.floor(left/60000),s=Math.floor(left%60000/1000);
+    cd.textContent=`${m}:${String(s).padStart(2,"0")} 후 자동 종료`;
+    document.body.classList.toggle("dim",left<120000); // 마지막 2분 화면 어둡게
+    if(left<=0){clearInterval(countdownInt);stopSession();}
+  };
+  tick();countdownInt=setInterval(tick,1000);
+}
+
+/* ---------- 세션 on/off ---------- */
+let running=false;
+const playBtn=document.getElementById("play");
+function startSession(){
+  running=true;ensureCtx();startBreathing();armTimer();
+  document.body.classList.add("dim-soft");
+  playBtn.textContent="⏸ 세션 멈추기";
+}
+function stopSession(){
+  running=false;stopBreathing();clearInterval(countdownInt);
+  Object.keys(active).forEach(t=>{
+    active[t].src._lfo&&active[t].src._lfo.stop();
+    active[t].src._crackle&&clearInterval(active[t].src._crackle);
+    active[t].src.stop();
+  });
+  active={};document.querySelectorAll(".snd").forEach(e=>e.classList.remove("on"));
+  document.body.classList.remove("dim");
+  document.getElementById("countdown").textContent="";
+  playBtn.textContent="▶ 수면 세션 시작";
+}
+playBtn.addEventListener("click",()=>running?stopSession():startSession());
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f1220">
+<title>findapps · 앱 3종</title>
+<style>
+  :root{--bg:#0f1220;--card:#191d31;--ink:#eef1ff;--sub:#9aa2c4;--line:#2a3050}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100dvh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:radial-gradient(120% 90% at 50% 0%,#1a1f3a,var(--bg));color:var(--ink);
+    display:flex;justify-content:center;padding:32px 18px}
+  .wrap{width:100%;max-width:520px}
+  h1{font-size:26px;margin:0 0 4px;letter-spacing:-.5px}
+  .tag{color:var(--sub);font-size:14px;margin-bottom:26px}
+  a.card{display:flex;gap:16px;align-items:center;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;
+    transition:transform .12s,border-color .2s}
+  a.card:hover{transform:translateY(-2px);border-color:#4a5aa0}
+  .ico{font-size:38px;flex:none}
+  .body h2{margin:0 0 4px;font-size:17px}
+  .body p{margin:0;color:var(--sub);font-size:13px;line-height:1.5}
+  .foot{color:var(--sub);font-size:12px;margin-top:20px;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>findapps</h1>
+  <div class="tag">가볍게 즐기는 웹앱 3종 · 설치 없이 바로 실행</div>
+
+  <a class="card" href="apps/cozy-collector/">
+    <div class="ico">🧺</div>
+    <div class="body"><h2>Cozy Collector</h2>
+      <p>떨어지는 아이템을 톡톡 모아 상자를 채우고, 재활용·판매로 비우며 계속 수집하는 힐링 게임.</p></div>
+  </a>
+
+  <a class="card" href="apps/sleepy-koala/">
+    <div class="ico">🐨</div>
+    <div class="body"><h2>Sleepy Koala</h2>
+      <p>호흡 가이드 + 실시간 앰비언트 사운드 + 슬립 타이머로 스르르 잠드는 수면 유도 앱.</p></div>
+  </a>
+
+  <a class="card" href="apps/smile-coach/">
+    <div class="ico">😊</div>
+    <div class="body"><h2>Smile Coach</h2>
+      <p>미소 세기·대칭·시선을 실시간 코칭하고 완벽할 때 자동 촬영하는 온디바이스 AI 셀카.</p></div>
+  </a>
+
+  <div class="foot">순수 HTML/CSS/JS · 빌드 불필요<br>Smile Coach는 카메라 권한과 HTTPS(또는 localhost)가 필요합니다.</div>
+</div>
+</body>
+</html>

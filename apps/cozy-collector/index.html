@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f3ede4">
+<title>Cozy Collector · 모으기 게임</title>
+<style>
+  :root{
+    --bg:#f3ede4; --panel:#fffaf2; --ink:#4b4235; --sub:#9a8f7d;
+    --accent:#e8a87c; --accent2:#c38d9e; --good:#8bb174; --line:#eadfce;
+    --shadow:0 8px 24px rgba(120,100,70,.14);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:radial-gradient(120% 100% at 50% 0%,#faf5ec,var(--bg));
+    color:var(--ink);display:flex;justify-content:center;overflow-x:hidden;
+    user-select:none;
+  }
+  .app{width:100%;max-width:460px;min-height:100dvh;display:flex;flex-direction:column;padding:14px 14px 24px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  h1{font-size:19px;margin:0;letter-spacing:-.3px}
+  h1 small{display:block;font-size:11px;color:var(--sub);font-weight:500;letter-spacing:0}
+  .coins{background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:7px 14px;font-weight:700;font-size:14px;box-shadow:var(--shadow);display:flex;gap:6px;align-items:center}
+
+  /* collecting field */
+  .field{position:relative;flex:1;min-height:300px;background:var(--panel);border:1px solid var(--line);
+    border-radius:26px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px;
+    background-image:radial-gradient(circle at 20% 20%,#fff7ea,transparent 40%),
+                     radial-gradient(circle at 80% 70%,#f6ecdd,transparent 45%);}
+  .field .hint{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);
+    text-align:center;color:var(--sub);font-size:14px;pointer-events:none;padding:0 30px;line-height:1.6}
+  .drop{position:absolute;font-size:34px;cursor:pointer;transition:transform .12s;
+    will-change:transform,top;animation:fall linear forwards}
+  .drop:active{transform:scale(.8)}
+  @keyframes fall{from{transform:translateY(-60px)}to{transform:translateY(0)}}
+  .pop{position:absolute;font-size:13px;font-weight:700;color:var(--good);pointer-events:none;
+    animation:pop .7s ease-out forwards}
+  @keyframes pop{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(1.3)}}
+
+  /* current target */
+  .target{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:12px}
+  .target .emoji{font-size:32px}
+  .target .meta{flex:1;min-width:0}
+  .target .name{font-weight:700;font-size:15px}
+  .target .bar{height:10px;background:#efe6d6;border-radius:999px;margin-top:7px;overflow:hidden}
+  .target .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:999px;transition:width .3s}
+  .target .count{font-size:12px;color:var(--sub);margin-top:5px}
+
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  button{font-family:inherit;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:700;
+    cursor:pointer;color:#fff;box-shadow:var(--shadow);transition:transform .1s,opacity .2s}
+  button:active{transform:scale(.96)}
+  button:disabled{opacity:.4;cursor:default}
+  .recycle{background:linear-gradient(135deg,#8bb174,#6f9a5c)}
+  .sell{background:linear-gradient(135deg,#e8a87c,#d98a5c)}
+  .full-note{grid-column:1/-1;text-align:center;font-size:12px;color:var(--sub);margin-top:-2px}
+
+  /* collection book */
+  .book{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:12px 14px;box-shadow:var(--shadow)}
+  .book h2{font-size:13px;margin:0 0 10px;color:var(--sub);letter-spacing:.3px}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .cell{aspect-ratio:1;border-radius:12px;background:#f6efe1;display:flex;align-items:center;
+    justify-content:center;font-size:20px;position:relative;filter:grayscale(1);opacity:.35}
+  .cell.owned{filter:none;opacity:1;background:#fff5e6}
+  .cell .n{position:absolute;bottom:2px;right:4px;font-size:9px;color:var(--sub);font-weight:700}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-size:13px;font-weight:600;
+    opacity:0;transition:.3s;pointer-events:none;z-index:50;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .roleplay{font-style:italic}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Cozy Collector<small>톡톡 모으는 힐링 게임</small></h1>
+    <div class="coins">🪙 <span id="coins">0</span></div>
+  </header>
+
+  <div class="field" id="field">
+    <div class="hint" id="hint">떨어지는 아이템을 톡! 눌러 모아보세요<br>같은 종류만 상자에 채워집니다</div>
+  </div>
+
+  <div class="target">
+    <div class="emoji" id="tEmoji">🫙</div>
+    <div class="meta">
+      <div class="name" id="tName">준비 중…</div>
+      <div class="bar"><div class="fill" id="tFill"></div></div>
+      <div class="count" id="tCount">0 / 0</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="recycle" id="btnRecycle" disabled>♻️ 재활용하기</button>
+    <button class="sell" id="btnSell" disabled>💰 판매하기</button>
+    <div class="full-note" id="fullNote">상자를 가득 채우면 버튼이 열려요</div>
+  </div>
+
+  <div class="book">
+    <h2 id="bookTitle">📖 수집 도감 · 0/? 종</h2>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ITEMS = [
+  {e:"🔵",name:"구슬"},   {e:"🍶",name:"빈 병"}, {e:"🍎",name:"사과"},
+  {e:"👕",name:"파란 티셔츠"}, {e:"🔘",name:"단추"}, {e:"🍋",name:"레몬"},
+  {e:"🌰",name:"도토리"}, {e:"🐚",name:"조개"},   {e:"🧩",name:"퍼즐 조각"},
+  {e:"⭐",name:"별 조각"}, {e:"🍄",name:"버섯"},   {e:"🪶",name:"깃털"},
+];
+const GOAL = 12;                 // 상자 하나 채우는 개수
+const SAVE = "cozy_collector_v1";
+
+let state = load();
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(SAVE));
+    if(s&&s.discovered) return s;}catch(e){}
+  return {coins:0, current:pick(), have:0, discovered:{}};
+}
+function save(){localStorage.setItem(SAVE, JSON.stringify(state));}
+function pick(){return Math.floor(Math.random()*ITEMS.length);}
+
+const $=id=>document.getElementById(id);
+const field=$("field");
+
+function render(){
+  const it=ITEMS[state.current];
+  $("coins").textContent=state.coins;
+  $("tEmoji").textContent=it.e;
+  $("tName").textContent=it.name+" 모으는 중";
+  $("tFill").style.width=Math.min(100,state.have/GOAL*100)+"%";
+  $("tCount").textContent=state.have+" / "+GOAL;
+  const full=state.have>=GOAL;
+  $("btnRecycle").disabled=!full;
+  $("btnSell").disabled=!full;
+  $("fullNote").textContent=full?"상자가 가득 찼어요! 비우고 새 아이템으로 →":"상자를 가득 채우면 버튼이 열려요";
+  // book
+  const grid=$("grid");grid.innerHTML="";
+  let owned=0;
+  ITEMS.forEach((x,i)=>{
+    const c=document.createElement("div");
+    const cnt=state.discovered[i]||0;
+    c.className="cell"+(cnt?" owned":"");
+    c.innerHTML=x.e+(cnt?`<span class="n">×${cnt}</span>`:"");
+    c.title=x.name;
+    grid.appendChild(c);
+    if(cnt)owned++;
+  });
+  $("bookTitle").textContent=`📖 수집 도감 · ${owned}/${ITEMS.length} 종`;
+}
+
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
+
+// spawn falling items
+function spawn(){
+  const isTarget=Math.random()<0.62;              // 62% 목표 아이템, 나머지 방해요소
+  const idx=isTarget?state.current:pick();
+  const el=document.createElement("div");
+  el.className="drop";
+  el.textContent=ITEMS[idx].e;
+  const w=field.clientWidth, h=field.clientHeight;
+  const x=Math.random()*(w-50)+8;
+  const y=Math.random()*(h-90)+8;
+  el.style.left=x+"px";
+  el.style.top=y+"px";
+  el.style.animationDuration=(0.3+Math.random()*0.3)+"s";
+  let alive=true;
+  const kill=()=>{if(alive){alive=false;el.remove();}};
+  el.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    if(!alive)return;
+    if(idx===state.current){
+      state.have=Math.min(GOAL,state.have+1);
+      showPop(x,y,"+1");
+    }else{
+      state.coins=Math.max(0,state.coins+1);   // 방해요소는 잡동사니 → 소소한 코인
+      showPop(x,y,"🪙");
+    }
+    $("hint").style.display="none";
+    kill();save();render();
+  },{passive:false});
+  field.appendChild(el);
+  setTimeout(kill, 2600);                          // 안 누르면 사라짐
+}
+function showPop(x,y,txt){
+  const p=document.createElement("div");p.className="pop";p.textContent=txt;
+  p.style.left=x+"px";p.style.top=y+"px";field.appendChild(p);
+  setTimeout(()=>p.remove(),700);
+}
+
+function finishBox(mode){
+  if(state.have<GOAL)return;
+  const it=ITEMS[state.current];
+  state.discovered[state.current]=(state.discovered[state.current]||0)+1;
+  if(mode==="sell"){
+    const gain=GOAL*3+Math.floor(Math.random()*8);
+    state.coins+=gain;
+    toast(`💰 "${it.name} ${GOAL}개, 한 상자에 ${gain}코인!" 판매 완료`);
+  }else{
+    const gain=Math.floor(GOAL*1.5);
+    state.coins+=gain;
+    toast(`♻️ ${it.name} ${GOAL}개를 곱게 재활용했어요 (+${gain})`);
+  }
+  state.have=0;
+  state.current=pick();
+  save();render();
+}
+
+$("btnSell").addEventListener("click",()=>finishBox("sell"));
+$("btnRecycle").addEventListener("click",()=>finishBox("recycle"));
+
+render();
+// 지속적으로 아이템이 떨어지게
+setInterval(()=>{ if(field.querySelectorAll('.drop').length<6) spawn(); }, 750);
+spawn();
+</script>
+</body>
+</html>

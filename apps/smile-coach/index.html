@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111318">
+<title>Smile Coach · AI 미소 셀카</title>
+<style>
+  :root{
+    --bg:#111318; --panel:#1b1e26; --ink:#f0f2f7; --sub:#9aa0b0;
+    --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --accent:#f9a8d4; --line:#2a2e3a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:var(--bg);color:var(--ink);overflow-x:hidden;user-select:none;display:flex;justify-content:center}
+  .app{width:100%;max-width:460px;min-height:100dvh;display:flex;flex-direction:column;padding:14px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  h1{font-size:18px;margin:0;letter-spacing:-.3px}
+  h1 small{display:block;font-size:11px;color:var(--sub);font-weight:500}
+
+  .stage{position:relative;width:100%;aspect-ratio:3/4;background:#000;border-radius:22px;overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  .overlay{position:absolute;inset:0;pointer-events:none}
+  .status{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:center}
+  .pill{background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-radius:999px;padding:8px 16px;
+    font-size:14px;font-weight:700;color:#fff;transition:.2s}
+  .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+  .flash.go{animation:fl .5s ease-out}
+  @keyframes fl{0%{opacity:.9}100%{opacity:0}}
+  .ring{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    width:60px;height:60px;border-radius:50%;border:4px solid rgba(255,255,255,.5);
+    display:flex;align-items:center;justify-content:center}
+  .ring b{width:44px;height:44px;border-radius:50%;background:#fff;transition:.2s}
+  .ring.armed b{background:var(--good);box-shadow:0 0 20px var(--good)}
+  .center-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;color:#fff;font-size:14px;padding:30px;line-height:1.6}
+
+  .meters{margin-top:14px;display:flex;flex-direction:column;gap:12px}
+  .meter{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+  .meter .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px}
+  .meter .label{font-weight:600}
+  .meter .val{color:var(--sub);font-variant-numeric:tabular-nums}
+  .track{height:9px;background:#2a2e3a;border-radius:999px;overflow:hidden;position:relative}
+  .track .zone{position:absolute;top:0;bottom:0;background:rgba(74,222,128,.18)}
+  .bar{height:100%;width:0%;border-radius:999px;transition:width .12s,background .2s}
+
+  .controls{margin-top:16px;display:grid;grid-template-columns:1fr;gap:10px}
+  button{font-family:inherit;border:none;border-radius:15px;padding:15px;font-size:15px;font-weight:700;
+    cursor:pointer;transition:transform .1s;color:#111}
+  button:active{transform:scale(.97)}
+  .primary{background:linear-gradient(135deg,#f9a8d4,#f472b6);color:#3a0d29}
+  .ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .toggle-row{display:flex;gap:8px}
+  .toggle-row button{flex:1;padding:12px;font-size:13px}
+  .toggle-row .active{outline:2px solid var(--accent)}
+
+  .gallery{margin-top:16px}
+  .gallery h2{font-size:13px;color:var(--sub);margin:0 0 8px}
+  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .shots img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:1px solid var(--line);transform:scaleX(-1)}
+  .foot{color:var(--sub);font-size:11px;margin-top:14px;line-height:1.6;text-align:center}
+  .err{color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Smile Coach<small>완벽한 미소를 실시간으로 코칭</small></h1>
+    <div class="pill" style="position:static;font-size:12px" id="score">–</div>
+  </header>
+
+  <div class="stage">
+    <video id="video" playsinline muted></video>
+    <canvas id="canvas" class="overlay"></canvas>
+    <div class="status"><div class="pill" id="coach">카메라를 켜주세요</div></div>
+    <div class="center-msg" id="centerMsg">아래 <b>&nbsp;카메라 시작&nbsp;</b> 버튼을 눌러<br>얼굴 인식을 시작하세요</div>
+    <div class="ring" id="ring"><b></b></div>
+    <div class="flash" id="flash"></div>
+  </div>
+
+  <div class="meters">
+    <div class="meter">
+      <div class="top"><span class="label">😊 미소 세기</span><span class="val" id="smileVal">0%</span></div>
+      <div class="track"><div class="zone" id="smileZone"></div><div class="bar" id="smileBar"></div></div>
+    </div>
+    <div class="meter">
+      <div class="top"><span class="label">↔️ 미소 대칭 (입꼬리 균형)</span><span class="val" id="symVal">–</span></div>
+      <div class="track"><div class="zone" id="symZone"></div><div class="bar" id="symBar"></div></div>
+    </div>
+    <div class="meter">
+      <div class="top"><span class="label">👀 시선 고정 (카메라 응시)</span><span class="val" id="gazeVal">–</span></div>
+      <div class="track"><div class="zone" id="gazeZone"></div><div class="bar" id="gazeBar"></div></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="startBtn">📷 카메라 시작</button>
+    <div class="toggle-row">
+      <button class="ghost active" id="modeAuto">✨ 자동 촬영 (완벽할 때)</button>
+      <button class="ghost" id="modeManual">✋ 수동 촬영</button>
+    </div>
+    <button class="ghost" id="shootBtn" style="display:none">🔘 지금 촬영</button>
+  </div>
+
+  <div class="gallery" id="gallery" style="display:none">
+    <h2>📸 촬영한 셀카</h2>
+    <div class="shots" id="shots"></div>
+  </div>
+
+  <div class="foot" id="foot">
+    모든 얼굴 인식은 <b>기기 안에서만</b> 처리되며 어디에도 전송되지 않습니다.<br>
+    (MediaPipe Face Landmarker · 오프라인 온디바이스 AI)
+  </div>
+</div>
+
+<script type="module">
+import { FaceLandmarker, FilesetResolver }
+  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+
+const $=id=>document.getElementById(id);
+const video=$("video"), canvas=$("canvas"), cctx=canvas.getContext("2d");
+let landmarker=null, running=false, mode="auto";
+let armedFrames=0, cooldown=0, lastVideoTime=-1;
+
+// 좋은 미소 기준 범위
+const SMILE_MIN=0.45, SMILE_MAX=0.95;   // 너무 과하지도, 약하지도 않게
+const SYM_OK=0.80;                        // 대칭 80% 이상
+const GAZE_OK=0.78;                       // 시선 정면 78% 이상
+const HOLD=8;                             // 조건 유지 프레임 수
+
+function setZone(id,fromPct,toPct){
+  const z=$(id);z.style.left=fromPct+"%";z.style.width=(toPct-fromPct)+"%";
+}
+setZone("smileZone",SMILE_MIN*100,SMILE_MAX*100);
+setZone("symZone",SYM_OK*100,100);
+setZone("gazeZone",GAZE_OK*100,100);
+
+function barColor(ok){return ok?"var(--good)":"var(--warn)";}
+
+async function initModel(){
+  $("coach").textContent="AI 모델 불러오는 중…";
+  const fileset=await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  landmarker=await FaceLandmarker.createFromOptions(fileset,{
+    baseOptions:{modelAssetPath:
+      "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+      delegate:"GPU"},
+    outputFaceBlendshapes:true, runningMode:"VIDEO", numFaces:1
+  });
+}
+
+async function start(){
+  $("startBtn").disabled=true;
+  try{
+    if(!landmarker) await initModel();
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"user",width:{ideal:720},height:{ideal:960}},audio:false});
+    video.srcObject=stream;
+    await video.play();
+    $("centerMsg").style.display="none";
+    $("startBtn").textContent="⏹ 카메라 끄기";
+    $("startBtn").disabled=false;
+    running=true;
+    if(mode==="manual")$("shootBtn").style.display="block";
+    requestAnimationFrame(loop);
+  }catch(e){
+    $("coach").textContent="카메라를 열 수 없어요";
+    $("startBtn").textContent="📷 다시 시도";
+    $("startBtn").disabled=false;
+    $("foot").innerHTML='<span class="err">오류: '+ (e && e.message ? e.message : e) +
+      '</span><br>카메라 권한을 허용했는지, https 환경인지 확인하세요.';
+  }
+}
+function stop(){
+  running=false;
+  const s=video.srcObject; if(s)s.getTracks().forEach(t=>t.stop());
+  video.srcObject=null;
+  $("startBtn").textContent="📷 카메라 시작";
+  $("shootBtn").style.display="none";
+  $("coach").textContent="카메라가 꺼졌어요";
+  $("centerMsg").style.display="flex";
+}
+
+function bs(shapes,name){const c=shapes.find(x=>x.categoryName===name);return c?c.score:0;}
+
+function loop(){
+  if(!running)return;
+  if(video.readyState>=2 && video.currentTime!==lastVideoTime){
+    lastVideoTime=video.currentTime;
+    canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+    const res=landmarker.detectForVideo(video, performance.now());
+    cctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(res.faceBlendshapes && res.faceBlendshapes.length){
+      const shapes=res.faceBlendshapes[0].categories;
+      const lm=res.faceLandmarks[0];
+
+      // 1) 미소 세기
+      const sl=bs(shapes,"mouthSmileLeft"), sr=bs(shapes,"mouthSmileRight");
+      const smile=(sl+sr)/2;
+      // 2) 대칭 (좌우 입꼬리 차이 작을수록 좋음)
+      const sym=1-Math.min(1,Math.abs(sl-sr)/0.4);
+      // 3) 시선/정면 (눈 좌우 흘김 + 머리 좌우 회전 적을수록 좋음)
+      const look=(bs(shapes,"eyeLookOutLeft")+bs(shapes,"eyeLookOutRight")
+                 +bs(shapes,"eyeLookInLeft")+bs(shapes,"eyeLookInRight"))/4;
+      // 머리 좌우: 코끝(1) 대비 얼굴 양끝(234,454) 중앙 정렬
+      let headYaw=0;
+      if(lm){const nose=lm[1],l=lm[234],r=lm[454];
+        const mid=(l.x+r.x)/2; headYaw=Math.min(1,Math.abs(nose.x-mid)/0.06);}
+      const gaze=Math.max(0,1-(look*1.6+headYaw*0.6));
+
+      updateMeters(smile,sym,gaze);
+      coach(smile,sym,gaze);
+    }else{
+      $("coach").textContent="얼굴이 안 보여요 🔍";
+      resetMeters();
+      armedFrames=0;$("ring").classList.remove("armed");
+    }
+  }
+  if(cooldown>0)cooldown--;
+  requestAnimationFrame(loop);
+}
+
+function pct(v){return Math.round(v*100)+"%";}
+function updateMeters(smile,sym,gaze){
+  const smileOK=smile>=SMILE_MIN && smile<=SMILE_MAX;
+  $("smileBar").style.width=Math.min(100,smile*100)+"%";
+  $("smileBar").style.background=barColor(smileOK);
+  $("smileVal").textContent=pct(smile);
+
+  $("symBar").style.width=sym*100+"%";
+  $("symBar").style.background=barColor(sym>=SYM_OK);
+  $("symVal").textContent=pct(sym);
+
+  $("gazeBar").style.width=gaze*100+"%";
+  $("gazeBar").style.background=barColor(gaze>=GAZE_OK);
+  $("gazeVal").textContent=pct(gaze);
+}
+function resetMeters(){
+  ["smile","sym","gaze"].forEach(k=>{$(k+"Bar").style.width="0%";});
+  $("smileVal").textContent="0%";$("symVal").textContent="–";$("gazeVal").textContent="–";
+}
+
+function coach(smile,sym,gaze){
+  const smileOK=smile>=SMILE_MIN && smile<=SMILE_MAX;
+  const symOK=sym>=SYM_OK, gazeOK=gaze>=GAZE_OK;
+  const allOK=smileOK&&symOK&&gazeOK;
+  const total=Math.round((Math.min(smile/SMILE_MAX,1)*0.5+sym*0.25+gaze*0.25)*100);
+  $("score").textContent="⭐ "+total;
+
+  let msg;
+  if(allOK) msg="완벽해요! 그대로 유지 ✨";
+  else if(smile<SMILE_MIN) msg="입꼬리를 조금 더 올려보세요 🙂";
+  else if(smile>SMILE_MAX) msg="살짝만 힘을 빼면 자연스러워요";
+  else if(!symOK) msg=(bsAsym(smile))+" 입꼬리 좌우 균형을 맞춰요";
+  else if(!gazeOK) msg="카메라 렌즈를 정면으로 응시하세요 👀";
+  else msg="좋아요, 조금만 더!";
+  $("coach").textContent=msg;
+
+  // 자동 촬영: 조건을 HOLD 프레임 이상 유지
+  const ring=$("ring");
+  if(allOK && mode==="auto" && cooldown===0){
+    armedFrames++;
+    ring.classList.add("armed");
+    if(armedFrames>=HOLD){armedFrames=0;capture();cooldown=45;}
+  }else{
+    armedFrames=Math.max(0,armedFrames-1);
+    if(!allOK)ring.classList.remove("armed");
+  }
+}
+function bsAsym(){return "";}
+
+function capture(){
+  const c=document.createElement("canvas");
+  c.width=video.videoWidth;c.height=video.videoHeight;
+  const x=c.getContext("2d");
+  x.drawImage(video,0,0,c.width,c.height);
+  const url=c.toDataURL("image/jpeg",0.85);
+  const img=new Image();img.src=url;
+  $("gallery").style.display="block";
+  $("shots").prepend(img);
+  const f=$("flash");f.classList.remove("go");void f.offsetWidth;f.classList.add("go");
+  navigator.vibrate&&navigator.vibrate(30);
+}
+
+/* ---- UI ---- */
+$("startBtn").addEventListener("click",()=>running?stop():start());
+$("shootBtn").addEventListener("click",capture);
+$("modeAuto").addEventListener("click",()=>{
+  mode="auto";$("modeAuto").classList.add("active");$("modeManual").classList.remove("active");
+  $("shootBtn").style.display="none";});
+$("modeManual").addEventListener("click",()=>{
+  mode="manual";$("modeManual").classList.add("active");$("modeAuto").classList.remove("active");
+  if(running)$("shootBtn").style.display="block";});
+</script>
+</body>
+</html>
