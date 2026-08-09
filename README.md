@@ -23,6 +23,20 @@
   ```
   얼굴 인식 모델(MediaPipe Face Landmarker)은 최초 실행 시 CDN에서 내려받습니다(인터넷 필요). 이후 인식·판단·촬영은 모두 로컬에서 처리됩니다.
 
+## 📱 안드로이드 앱 (Google Play 등재용)
+
+세 웹앱은 [Capacitor](https://capacitorjs.com/)로 감싸 **서명된 AAB**로 빌드됩니다 → Play Console 업로드 가능.
+
+- 패키징 프로젝트: [`mobile/`](mobile) (앱별 Capacitor + Android 프로젝트)
+- 빌드/서명/등재 절차: [`mobile/README.md`](mobile/README.md)
+- CI 자동 빌드: [`.github/workflows/android-build.yml`](.github/workflows/android-build.yml) — `apps/`·`mobile/` 변경 시 세 앱 AAB를 자동 빌드해 아티팩트로 업로드
+
+| 앱 | 패키지명 | 특이 권한 |
+|----|----------|-----------|
+| Cozy Collector | `com.findapps.cozycollector` | — |
+| Sleepy Koala | `com.findapps.sleepykoala` | — |
+| Smile Coach | `com.findapps.smilecoach` | 카메라(온디바이스 처리, 전송 없음) |
+
 ## 저장소 구조에 대한 메모
 
 세 앱을 **하나의 저장소 안 `apps/*` 폴더**로 관리하는 모노레포 방식입니다.
