@@ -20,6 +20,9 @@ AI 자동화를 활용한 **디지털 상품 / 자동화 서비스 판매**로 �
 | [`product/outline.md`](product/outline.md) | L1·L2·L3 상품 제작 틀 |
 | [`playbook/30-day-launch.md`](playbook/30-day-launch.md) | 주차별 실행 체크리스트 + 배포법 |
 | [`playbook/content-engine.md`](playbook/content-engine.md) | AI 콘텐츠 자동 유입 파이프라인 |
+| [`playbook/email-sequence.md`](playbook/email-sequence.md) | **L1→L2 전환 자동 이메일 5통** (완성본) |
+| [`playbook/shorts-scripts.md`](playbook/shorts-scripts.md) | **홍보 Shorts 스크립트·샷 리스트 5편** + Higgsfield 생성 프롬프트 |
+| [`dashboard/index.html`](dashboard/index.html) | **런칭 대시보드** — 수익 계산기 + 진행 체크리스트 (배포 가능) |
 
 ## L2 풀 키트 구성 (`product/full-kit/`) — 완성됨, 바로 판매 가능
 | 모듈 | 내용 |

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReplyFast Launch Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#f4f6f9; --surface:#ffffff; --surface-2:#fbfcfe;
+    --ink:#141821; --muted:#5b6472; --line:#e4e8ee; --track:#e9edf3;
+    --brand:#2563eb; --brand-ink:#1d4ed8; --teal:#0d9488;
+    --good:#16a34a; --warn:#c2790b;
+    --shadow:0 1px 2px rgba(20,24,33,.05), 0 10px 28px rgba(20,24,33,.06);
+    --r:14px;
+  }
+  :root:not([data-theme="light"]){}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0c0f15; --surface:#141922; --surface-2:#10151d;
+      --ink:#e8ecf2; --muted:#94a1b2; --line:#242d39; --track:#1c232e;
+      --brand:#5b93ff; --brand-ink:#8fb4ff; --teal:#2dd4bf;
+      --good:#3ad07f; --warn:#f0b03e;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0c0f15; --surface:#141922; --surface-2:#10151d;
+    --ink:#e8ecf2; --muted:#94a1b2; --line:#242d39; --track:#1c232e;
+    --brand:#5b93ff; --brand-ink:#8fb4ff; --teal:#2dd4bf;
+    --good:#3ad07f; --warn:#f0b03e;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1060px;margin:0 auto;padding:34px 22px 72px}
+  h1,h2,h3{font-family:"Sora",sans-serif;letter-spacing:-.02em;text-wrap:balance;margin:0}
+  .mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;font-weight:600;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--brand-ink)}
+
+  /* Header */
+  header{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;
+    padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  header h1{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-top:6px}
+  header p{color:var(--muted);margin:8px 0 0;max-width:46ch;font-size:.96rem}
+  .ring-wrap{display:flex;align-items:center;gap:14px}
+  .ring{--p:0;width:96px;height:96px;border-radius:50%;flex:none;
+    background:conic-gradient(var(--brand) calc(var(--p)*1%), var(--track) 0);
+    display:grid;place-items:center;transition:background .5s ease}
+  .ring::before{content:"";position:absolute;width:70px;height:70px;border-radius:50%;background:var(--surface)}
+  .ring b{position:relative;font-family:"Sora";font-size:1.4rem;font-weight:700}
+  .ring-wrap span{font-size:.8rem;color:var(--muted);max-width:9ch;line-height:1.3}
+
+  section{margin-top:30px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+  .sec-head h2{font-size:1.15rem;font-weight:600}
+  .sec-head .hint{color:var(--muted);font-size:.85rem}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+
+  /* Revenue calculator */
+  .calc{padding:24px}
+  .calc .goal-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:18px}
+  .calc .total{font-family:"Sora";font-size:2.3rem;font-weight:700;line-height:1}
+  .calc .total small{font-size:1rem;color:var(--muted);font-weight:500;font-family:"IBM Plex Sans"}
+  .calc .goaltag{font-family:"IBM Plex Mono";font-size:.82rem;color:var(--muted)}
+  .bar{height:12px;border-radius:99px;background:var(--track);overflow:hidden}
+  .bar > i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--teal),var(--brand));transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .status{margin-top:10px;font-size:.9rem;color:var(--muted)}
+  .status b{color:var(--ink)}
+  .status.met{color:var(--good)}
+  .inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+  @media(max-width:640px){.inputs{grid-template-columns:1fr}}
+  .inp{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:14px}
+  .inp label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:2px}
+  .inp .price{font-family:"IBM Plex Mono";font-size:.72rem;color:var(--teal)}
+  .inp-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .inp input{width:100%;font-family:"IBM Plex Mono";font-size:1.35rem;font-weight:600;
+    background:transparent;border:none;color:var(--ink);padding:4px 0;-moz-appearance:textfield}
+  .inp input:focus{outline:none}
+  .inp input::-webkit-outer-spin-button,.inp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .stepper{display:flex;flex-direction:column;gap:4px}
+  .stepper button{width:26px;height:20px;border:1px solid var(--line);background:var(--surface);
+    color:var(--muted);border-radius:6px;cursor:pointer;font-size:.8rem;line-height:1;display:grid;place-items:center}
+  .stepper button:hover{border-color:var(--brand);color:var(--brand)}
+  .inp .sub{font-family:"IBM Plex Mono";font-size:.78rem;color:var(--muted);margin-top:8px}
+
+  /* Offer ladder */
+  .ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:720px){.ladder{grid-template-columns:1fr}}
+  .tier{padding:18px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface)}
+  .tier .lvl{font-family:"IBM Plex Mono";font-size:.72rem;letter-spacing:.1em;color:var(--muted)}
+  .tier h3{font-size:1.05rem;font-weight:600;margin:2px 0 6px}
+  .tier .amt{font-family:"Sora";font-weight:700;font-size:1.5rem;color:var(--brand-ink)}
+  .tier .amt small{font-size:.8rem;color:var(--muted);font-weight:500}
+  .tier p{font-size:.86rem;color:var(--muted);margin:8px 0 0}
+
+  /* Checklist */
+  .phase{margin-top:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+  .phase > summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;align-items:center;gap:14px}
+  .phase > summary::-webkit-details-marker{display:none}
+  .phase .chev{transition:transform .2s;color:var(--muted);flex:none}
+  .phase[open] .chev{transform:rotate(90deg)}
+  .phase .pname{font-family:"Sora";font-weight:600;font-size:1rem;flex:1}
+  .phase .pcount{font-family:"IBM Plex Mono";font-size:.8rem;color:var(--muted)}
+  .minibar{width:74px;height:6px;border-radius:99px;background:var(--track);overflow:hidden;flex:none}
+  .minibar > i{display:block;height:100%;background:var(--good);width:0;transition:width .4s}
+  .tasks{padding:2px 18px 14px 18px;display:grid;gap:2px}
+  .task{display:flex;gap:12px;align-items:flex-start;padding:9px 6px;border-radius:8px;cursor:pointer}
+  .task:hover{background:var(--surface-2)}
+  .task input{margin:0;flex:none;width:18px;height:18px;margin-top:2px;accent-color:var(--brand);cursor:pointer}
+  .task .t{font-size:.92rem}
+  .task .t small{display:block;color:var(--muted);font-size:.8rem;margin-top:1px}
+  .task.done .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .k{font-size:.8rem;color:var(--muted)}
+  .kpi .v{font-family:"Sora";font-weight:700;font-size:1.3rem;margin-top:3px}
+  .kpi .v span{font-size:.8rem;color:var(--muted);font-weight:500}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;align-items:center}
+  .btn{font-family:"IBM Plex Sans";font-size:.85rem;font-weight:500;padding:8px 14px;border-radius:9px;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+  .btn:hover{border-color:var(--brand);color:var(--brand)}
+  .foot{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
+  a{color:var(--brand-ink)}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <span class="eyebrow">Launch Control · ReplyFast</span>
+      <h1>Road to $3,000 / month</h1>
+      <p>Your build-and-launch cockpit. Model the numbers, tick off the setup, and watch the passive-income machine come online.</p>
+    </div>
+    <div class="ring-wrap">
+      <div class="ring" id="ring"><b id="ringPct">0%</b></div>
+      <span>launch checklist complete</span>
+    </div>
+  </header>
+
+  <!-- REVENUE MODEL -->
+  <section>
+    <div class="sec-head">
+      <h2>Revenue model</h2>
+      <span class="hint">adjust the sliders to your reality — target is A$3,000/mo</span>
+    </div>
+    <div class="card calc">
+      <div class="goal-row">
+        <div class="total"><span id="total">$0</span><small> / mo AUD</small></div>
+        <div class="goaltag">GOAL <b class="mono">A$3,000</b></div>
+      </div>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="status" id="status">Set your monthly numbers below.</div>
+
+      <div class="inputs">
+        <div class="inp">
+          <label>L2 kit sales <span class="price">@ A$59</span></label>
+          <div class="inp-row">
+            <input id="in_kit" type="number" min="0" value="26" inputmode="numeric">
+            <div class="stepper"><button data-t="in_kit" data-d="1">▲</button><button data-t="in_kit" data-d="-1">▼</button></div>
+          </div>
+          <div class="sub" id="sub_kit">= $1,534</div>
+        </div>
+        <div class="inp">
+          <label>L3 setups <span class="price">@ A$490</span></label>
+          <div class="inp-row">
+            <input id="in_dfy" type="number" min="0" value="1" inputmode="numeric">
+            <div class="stepper"><button data-t="in_dfy" data-d="1">▲</button><button data-t="in_dfy" data-d="-1">▼</button></div>
+          </div>
+          <div class="sub" id="sub_dfy">= $490</div>
+        </div>
+        <div class="inp">
+          <label>Care clients <span class="price">@ A$290/mo</span></label>
+          <div class="inp-row">
+            <input id="in_care" type="number" min="0" value="4" inputmode="numeric">
+            <div class="stepper"><button data-t="in_care" data-d="1">▲</button><button data-t="in_care" data-d="-1">▼</button></div>
+          </div>
+          <div class="sub" id="sub_care">= $1,160 recurring</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFER LADDER -->
+  <section>
+    <div class="sec-head"><h2>Offer ladder</h2><span class="hint">one niche, three price points</span></div>
+    <div class="ladder">
+      <div class="tier">
+        <div class="lvl">L1 · LEAD MAGNET</div>
+        <h3>7 Free Prompts</h3>
+        <div class="amt">Free <small>· collects emails</small></div>
+        <p>The hook. Captures the email, then the 5-email sequence sells the kit.</p>
+      </div>
+      <div class="tier">
+        <div class="lvl">L2 · CORE PRODUCT</div>
+        <h3>Lead Response Kit</h3>
+        <div class="amt">A$59 <small>· one-time</small></div>
+        <p>30 prompts + automations. 100% margin, sells on autopilot. Your volume play.</p>
+      </div>
+      <div class="tier">
+        <div class="lvl">L3 · REVENUE DRIVER</div>
+        <h3>Done-For-You + Care</h3>
+        <div class="amt">A$490 <small>+ $290/mo</small></div>
+        <p>Setup service builds cash fast; Care turns it into recurring MRR.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section>
+    <div class="sec-head"><h2>Launch checklist</h2><span class="hint" id="taskCount">0 / 0 done</span></div>
+    <div id="phases"></div>
+    <div class="toolbar">
+      <button class="btn" id="expandAll">Expand all</button>
+      <button class="btn" id="resetBtn">Reset progress</button>
+    </div>
+  </section>
+
+  <!-- KPIS -->
+  <section>
+    <div class="sec-head"><h2>Weekly targets</h2><span class="hint">check these every Monday (5 min)</span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="k">New leads / wk</div><div class="v">25+ <span>emails</span></div></div>
+      <div class="kpi"><div class="k">Free → paid</div><div class="v">2–5<span>%</span></div></div>
+      <div class="kpi"><div class="k">Shorts posted / wk</div><div class="v">5<span>× 1/day</span></div></div>
+      <div class="kpi"><div class="k">Reviews earned / mo</div><div class="v">8–12<span>⭐</span></div></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    Private tracker — progress is saved in this browser only. Numbers are planning estimates, not guarantees; most builds reach the target 3–6 months after launch. · <a href="README.md">Repo guide</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var PRICES = {in_kit:59, in_dfy:490, in_care:290};
+  var GOAL = 3000;
+  var fmt = function(n){ return "$" + Math.round(n).toLocaleString("en-AU"); };
+  function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
+
+  /* ---- Revenue calculator ---- */
+  var ids = ["in_kit","in_dfy","in_care"];
+  var subs = {in_kit:"sub_kit", in_dfy:"sub_dfy", in_care:"sub_care"};
+  function getVal(id){ var el=document.getElementById(id); var n=parseInt(el.value,10); return isNaN(n)||n<0?0:n; }
+  function calc(){
+    var total=0;
+    ids.forEach(function(id){
+      var n=getVal(id), amt=n*PRICES[id];
+      total+=amt;
+      document.getElementById(subs[id]).textContent = "= "+fmt(amt)+(id==="in_care"?" recurring":"");
+    });
+    document.getElementById("total").textContent = fmt(total);
+    var pct=Math.min(100, total/GOAL*100);
+    document.getElementById("bar").style.width = pct+"%";
+    var st=document.getElementById("status");
+    if(total>=GOAL){ st.className="status met"; st.innerHTML="🎉 Target cleared — <b>"+fmt(total-GOAL)+"</b> over goal. Now make it more passive by shifting weight to L2 sales."; }
+    else { st.className="status"; st.innerHTML="<b>"+fmt(GOAL-total)+"</b> to go. Recurring Care revenue is the steadiest way to close the gap."; }
+    var save={}; ids.forEach(function(id){ save[id]=getVal(id); });
+    store("rf_calc", JSON.stringify(save));
+  }
+  (function restore(){
+    try{ var s=JSON.parse(store("rf_calc")); if(s){ ids.forEach(function(id){ if(typeof s[id]==="number") document.getElementById(id).value=s[id]; }); } }catch(e){}
+  })();
+  ids.forEach(function(id){ document.getElementById(id).addEventListener("input", calc); });
+  document.querySelectorAll(".stepper button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var el=document.getElementById(b.dataset.t);
+      el.value=Math.max(0, (parseInt(el.value,10)||0)+parseInt(b.dataset.d,10));
+      calc();
+    });
+  });
+
+  /* ---- Checklist ---- */
+  var PHASES = [
+    {id:"p1", name:"1 · Foundation", tasks:[
+      {id:"t_niche", t:"Confirm the niche", s:"Local service businesses — or swap in your own"},
+      {id:"t_gum", t:"Create a free Gumroad account", s:"Handles files + payment in one"},
+      {id:"t_email", t:"Set up MailerLite / Kit (free)", s:"For the L1 email capture + sequence"}
+    ]},
+    {id:"p2", name:"2 · Products live", tasks:[
+      {id:"t_l1", t:"Publish L1 free kit on Gumroad ($0)", s:"From product/l1-free-kit.md — email required"},
+      {id:"t_l2", t:"Package & publish L2 Full Kit (A$59)", s:"Bundle the 5 full-kit modules as PDF/Notion"},
+      {id:"t_video", t:"Record 2–3 setup videos", s:"Short screen recordings for the kit"}
+    ]},
+    {id:"p3", name:"3 · Sell on autopilot", tasks:[
+      {id:"t_links", t:"Swap the 5 link placeholders in the landing page", s:"Gumroad + email + DFY links"},
+      {id:"t_deploy", t:"Deploy landing to Vercel / Netlify", s:"Free static hosting"},
+      {id:"t_seq", t:"Load the 5-email sequence", s:"From playbook/email-sequence.md"},
+      {id:"t_test", t:"Test-buy to confirm delivery", s:"One dummy purchase end-to-end"}
+    ]},
+    {id:"p4", name:"4 · Traffic engine", tasks:[
+      {id:"t_channel", t:"Pick ONE content channel & set up the account", s:"TikTok/Reels or X/LinkedIn"},
+      {id:"t_shorts", t:"Produce first 20 posts / Shorts", s:"Scripts in playbook/shorts-scripts.md"},
+      {id:"t_schedule", t:"Schedule a week ahead (Buffer/Make)", s:"Hands-off publishing"}
+    ]},
+    {id:"p5", name:"5 · Scale revenue", tasks:[
+      {id:"t_dfy", t:"Open the L3 Done-For-You offer", s:"Pitch to L2 buyers who haven't set up"},
+      {id:"t_care", t:"Launch the Care plan (A$290/mo)", s:"Recurring MRR — the $3k anchor"},
+      {id:"t_review", t:"Automate the review + testimonial ask", s:"Fuels referrals and social proof"}
+    ]}
+  ];
+  var doneSet={};
+  try{ doneSet = JSON.parse(store("rf_tasks")||"{}") || {}; }catch(e){ doneSet={}; }
+
+  var host=document.getElementById("phases");
+  PHASES.forEach(function(p, i){
+    var det=document.createElement("details"); det.className="phase"; if(i<2) det.open=true;
+    var sum=document.createElement("summary");
+    sum.innerHTML='<span class="chev">▶</span><span class="pname">'+p.name+'</span>'
+      +'<span class="minibar"><i id="mb_'+p.id+'"></i></span><span class="pcount" id="pc_'+p.id+'"></span>';
+    det.appendChild(sum);
+    var box=document.createElement("div"); box.className="tasks";
+    p.tasks.forEach(function(tk){
+      var row=document.createElement("label"); row.className="task"; row.setAttribute("for", tk.id);
+      var checked=!!doneSet[tk.id];
+      row.innerHTML='<input type="checkbox" id="'+tk.id+'"'+(checked?" checked":"")
+        +'><span class="t">'+tk.t+'<small>'+tk.s+'</small></span>';
+      if(checked) row.classList.add("done");
+      box.appendChild(row);
+    });
+    det.appendChild(box);
+    host.appendChild(det);
+  });
+
+  var allTasks=[]; PHASES.forEach(function(p){ p.tasks.forEach(function(t){ allTasks.push({pid:p.id, id:t.id}); }); });
+
+  function refresh(){
+    var total=allTasks.length, done=0;
+    PHASES.forEach(function(p){
+      var d=0; p.tasks.forEach(function(t){ if(doneSet[t.id]) d++; });
+      done+=d;
+      document.getElementById("mb_"+p.id).style.width=(d/p.tasks.length*100)+"%";
+      document.getElementById("pc_"+p.id).textContent=d+"/"+p.tasks.length;
+    });
+    var pct=Math.round(done/total*100);
+    document.getElementById("ring").style.setProperty("--p", pct);
+    document.getElementById("ringPct").textContent=pct+"%";
+    document.getElementById("taskCount").textContent=done+" / "+total+" done";
+  }
+  host.addEventListener("change", function(e){
+    if(e.target.matches('input[type="checkbox"]')){
+      doneSet[e.target.id]=e.target.checked;
+      e.target.closest(".task").classList.toggle("done", e.target.checked);
+      store("rf_tasks", JSON.stringify(doneSet));
+      refresh();
+    }
+  });
+  document.getElementById("expandAll").addEventListener("click", function(){
+    var open=document.querySelectorAll(".phase:not([open])").length>0;
+    document.querySelectorAll(".phase").forEach(function(d){ d.open=open; });
+    this.textContent=open?"Collapse all":"Expand all";
+  });
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!confirm("Clear all checklist progress?")) return;
+    doneSet={}; store("rf_tasks","{}");
+    document.querySelectorAll('.task input').forEach(function(c){ c.checked=false; c.closest(".task").classList.remove("done"); });
+    refresh();
+  });
+
+  calc(); refresh();
+})();
+</script>
+</body>
+</html>
