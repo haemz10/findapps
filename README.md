@@ -9,10 +9,16 @@ AI 자동화를 활용한 **디지털 상품 / 자동화 서비스 판매**로 �
 - **핵심 약속:** 문의 60초 자동 응답 + 견적 자동 작성 + 리뷰 자동 요청
 - 랜딩·상품은 고객(호주)용 **영어**, 전략/플레이북은 사용자용 **한국어**
 
+## ⭐ 먼저 볼 것
+- [`AUTOMATION-MAP.md`](AUTOMATION-MAP.md) — **5% 개입 / 95% 자동화 운영 맵.** 당신이 손대는 5%의 전체 목록과, 시스템이 대신 돌리는 95%.
+
 ## 구성
 | 파일 | 내용 |
 |---|---|
 | [`STRATEGY.md`](STRATEGY.md) | 전체 수익 구조 · 3층 오퍼 · $3k 도달 수학 · 8주 로드맵 |
+| [`automation/leads-engine.gs`](automation/leads-engine.gs) | **리드 자동 엔진** — 리뷰 요청·견적 팔로우업 무인 발송(Apps Script) |
+| [`automation/README.md`](automation/README.md) | 리드 엔진 설치 가이드(1회 15분) |
+| `.github/workflows/deploy-pages.yml` · `vercel.json` · `netlify.toml` | 랜딩 **자동 배포** 설정(push마다 무인) |
 | [`landing/index.html`](landing/index.html) | **실제 카피로 채운** 세일즈 랜딩 페이지 (링크 `[[...]]`만 교체) |
 | [`product/l1-free-kit.md`](product/l1-free-kit.md) | **완성된 무료 L1 리드 마그넷** — 바로 쓰는 프롬프트 7개 |
 | [`product/full-kit/`](product/full-kit) | **완성된 L2 풀 키트($59)** — 5개 모듈 |
