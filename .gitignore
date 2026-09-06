@@ -1,12 +1,21 @@
 node_modules/
-.env
-.env.local
 
-# Playwright 로그인 세션(민감정보)
-.auth/
-storage-state*.json
+# 로그인 세션(persistentContext) — 절대 공유 금지
+naver-profile/
 
-# 생성된 콘텐츠 산출물
-output/
-drafts/
+# 사용자 원본/처리 미디어 (개인 자료)
+input/photos/*
+input/videos/*
+!input/photos/.gitkeep
+!input/videos/.gitkeep
+# input/photos/_mosaic/ 는 mosaic.js 실행 시 자동 생성됩니다.
+
+# 초안·덤프·모자이크 spec·스크린샷 산출물
+drafts/*
+!drafts/.gitkeep
+
+# 안정본 백업(용량·환경 종속)
+scripts/**/*.working.js
+
 *.log
+.DS_Store

@@ -1,29 +1,20 @@
 {
-  "name": "blog-automation",
+  "name": "naver-popsong-blog-automation",
   "version": "0.1.0",
-  "description": "Tistory/Naver 블로그 자동화 - AI 콘텐츠 생성 + 자동 발행",
+  "private": true,
+  "description": "네이버 팝송 해석·영어 학습 블로그 자동 초안 작성 툴 (Volador) — AI는 Claude Code 세션 안에서, 발행은 사람이",
   "type": "module",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "generate": "node src/cli.js generate",
-    "publish": "node src/cli.js publish",
-    "run": "node src/cli.js run",
-    "login": "node src/cli.js login"
+    "login": "node scripts/naver_login.js",
+    "draft": "node scripts/naver_draft.js",
+    "probe": "node scripts/probe_selectors.js",
+    "mosaic": "node scripts/mosaic.js"
   },
-  "keywords": [
-    "blog",
-    "automation",
-    "tistory",
-    "naver",
-    "playwright",
-    "ai"
-  ],
-  "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
-    "dotenv": "^16.4.7",
-    "playwright": "^1.49.1"
+    "playwright": "^1.49.1",
+    "sharp": "^0.35.4"
   }
 }
