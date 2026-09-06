@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>[[상품명]] — [[핵심 약속 한 줄]]</title>
-<meta name="description" content="[[검색/공유용 한 줄 설명]]">
+<title>ReplyFast — Never Miss Another Lead</title>
+<meta name="description" content="The AI automation kit for local service businesses. Reply to every enquiry in 60 seconds, draft quotes in minutes, and get more 5-star reviews — on autopilot.">
 <style>
   :root{
     --bg:#ffffff; --fg:#101418; --muted:#5a6472; --line:#e7ebf0;
-    --card:#f7f9fc; --brand:#4f46e5; --brand-fg:#ffffff; --accent:#0ea5a4;
+    --card:#f7f9fc; --brand:#2563eb; --brand-fg:#ffffff; --accent:#0ea5a4;
     --shadow:0 1px 2px rgba(16,20,24,.06),0 8px 24px rgba(16,20,24,.06);
   }
   @media (prefers-color-scheme:dark){
     :root{--bg:#0e1116;--fg:#e8ecf2;--muted:#9aa4b2;--line:#232a33;
-    --card:#161b22;--brand:#7c74ff;--accent:#2dd4bf;
+    --card:#161b22;--brand:#4f8cff;--accent:#2dd4bf;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.4);}
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     line-height:1.6;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
   a{color:inherit}
@@ -30,20 +30,19 @@
   .muted{color:var(--muted)}
   .center{text-align:center}
 
-  /* Hero */
   header.hero{padding:72px 0 56px;text-align:center;
     background:radial-gradient(1000px 400px at 50% -10%, color-mix(in srgb,var(--brand) 14%, transparent), transparent)}
   .pill{display:inline-block;font-size:.82rem;font-weight:600;color:var(--brand);
     background:color-mix(in srgb,var(--brand) 12%, transparent);
     padding:6px 14px;border-radius:999px;margin-bottom:22px}
   h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin:.2em 0;letter-spacing:-.02em}
-  .sub{font-size:clamp(1.05rem,2.2vw,1.3rem);color:var(--muted);max-width:640px;margin:18px auto 30px}
+  .sub{font-size:clamp(1.05rem,2.2vw,1.3rem);color:var(--muted);max-width:660px;margin:18px auto 30px}
   .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   .trust{margin-top:18px;font-size:.9rem;color:var(--muted)}
 
   section{padding:56px 0;border-top:1px solid var(--line)}
   h2{font-size:clamp(1.5rem,3.5vw,2.1rem);letter-spacing:-.01em;margin:0 0 8px}
-  .lead{color:var(--muted);max-width:620px;margin:0 0 32px}
+  .lead{color:var(--muted);max-width:640px;margin:0 0 32px}
   .center .lead{margin-left:auto;margin-right:auto}
 
   .grid{display:grid;gap:18px}
@@ -55,14 +54,11 @@
   .card h3{margin:.2em 0 .4em;font-size:1.15rem}
   .ico{font-size:1.6rem}
 
-  /* Pain / value list */
   ul.check{list-style:none;padding:0;margin:0;display:grid;gap:12px}
   ul.check li{padding-left:32px;position:relative}
-  ul.check li::before{content:"✓";position:absolute;left:0;top:0;
-    color:var(--accent);font-weight:800}
+  ul.check li::before{content:"✓";position:absolute;left:0;top:0;color:var(--accent);font-weight:800}
   ul.pain li::before{content:"✕";color:#e5484d}
 
-  /* Pricing */
   .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
   @media(max-width:820px){.price-grid{grid-template-columns:1fr}}
   .tier{background:var(--card);border:1px solid var(--line);border-radius:18px;
@@ -78,7 +74,6 @@
   .tier ul li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
   .tier .btn{width:100%;text-align:center}
 
-  /* FAQ */
   details{border:1px solid var(--line);border-radius:12px;padding:16px 20px;background:var(--card);margin-bottom:12px}
   details summary{cursor:pointer;font-weight:600;list-style:none}
   details summary::-webkit-details-marker{display:none}
@@ -86,6 +81,9 @@
 
   .guarantee{background:color-mix(in srgb,var(--accent) 10%,transparent);
     border:1px dashed var(--accent);border-radius:16px;padding:24px;text-align:center}
+  .stat-row{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .stat b{display:block;font-size:1.9rem;color:var(--brand)}
+  .stat span{font-size:.85rem;color:var(--muted)}
 
   footer{padding:40px 0 60px;text-align:center;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
   .quote{font-size:1.05rem}
@@ -97,43 +95,43 @@
 <!-- =========== HERO =========== -->
 <header class="hero">
   <div class="wrap">
-    <span class="pill">[[타깃 고객, 예: 1인 크리에이터 · 로컬 사업자]]</span>
-    <h1>[[핵심 약속: "매주 20시간 걸리던 __를<br>10분 만에 자동화하세요"]]</h1>
-    <p class="sub">[[한 문장 부연: 누구를 위해, 무엇을, 어떻게 — AI 자동화 키트로 __를 해결합니다.]]</p>
+    <span class="pill">For plumbers, sparkies, cleaners, landscapers &amp; local trades</span>
+    <h1>Every missed call is a job<br>your competitor just won.</h1>
+    <p class="sub">ReplyFast is the plug-and-play AI kit that replies to every enquiry in 60 seconds, drafts your quotes, and asks for 5-star reviews — automatically. Set it up once this weekend. No coding, no monthly agency fees.</p>
     <div class="cta-row">
-      <a class="btn" href="[[GUMROAD_L2_구매링크]]">지금 시작하기 — [[$59]]</a>
-      <a class="btn ghost" href="#free">먼저 무료 키트 받기</a>
+      <a class="btn" href="[[GUMROAD_FULLKIT_LINK]]">Get the Kit — A$59</a>
+      <a class="btn ghost" href="#free">Grab 7 free prompts first</a>
     </div>
-    <p class="trust">⭐️ [[예: 300명+ 사용]] · 7일 환불 보장 · 즉시 다운로드</p>
+    <p class="trust">⭐️ Built for Aussie service businesses · 7-day money-back guarantee · Instant download</p>
   </div>
 </header>
 
 <!-- =========== PAIN =========== -->
 <section>
   <div class="wrap">
-    <h2>이런 반복업무, 아직도 직접 하고 계신가요?</h2>
-    <p class="lead">[[타깃 고객]]이 매주 낭비하는 시간입니다.</p>
-    <ul class="check pain" style="max-width:560px">
-      <li>[[고통 1 — 예: 매 게시물마다 카피를 처음부터 씀]]</li>
-      <li>[[고통 2 — 예: 문의/견적 응대에 하루 1시간]]</li>
-      <li>[[고통 3 — 예: 자동화하고 싶지만 어디서 시작할지 모름]]</li>
-      <li>[[고통 4 — 예: 툴은 많은데 내 업무에 맞는 세팅이 없음]]</li>
+    <h2>You're losing jobs and you can't even see it happening</h2>
+    <p class="lead">When you're up a ladder or under a sink, the phone wins the war for you.</p>
+    <ul class="check pain" style="max-width:600px">
+      <li>A lead calls, you can't answer, they ring the next business — and never call back.</li>
+      <li>You spend your nights typing the same quotes and replies over and over.</li>
+      <li>Happy customers would leave a review… if you ever remembered to ask.</li>
+      <li>You know "AI" could help, but you don't have time to figure out where to start.</li>
     </ul>
   </div>
 </section>
 
-<!-- =========== SOLUTION / WHAT'S INSIDE =========== -->
+<!-- =========== WHAT'S INSIDE =========== -->
 <section>
   <div class="wrap">
-    <h2>[[상품명]] 안에 들어있는 것</h2>
-    <p class="lead">따라만 하면 오늘 세팅 끝. 코딩·경험 필요 없음.</p>
+    <h2>The Lead Response Kit</h2>
+    <p class="lead">Everything set up in an afternoon. Then it runs while you work.</p>
     <div class="grid g3">
-      <div class="card"><div class="ico">⚙️</div><h3>바로 쓰는 자동화 템플릿</h3><p class="muted">[[Make/Zapier/n8n 시나리오 · 프롬프트 라이브러리 — 복사해서 즉시 가동.]]</p></div>
-      <div class="card"><div class="ico">🎬</div><h3>셋업 영상 가이드</h3><p class="muted">[[10분 화면 녹화 따라하기. 설치부터 첫 자동화까지.]]</p></div>
-      <div class="card"><div class="ico">📋</div><h3>주간 운영 SOP</h3><p class="muted">[[매주 무엇을 자동으로 돌릴지 단계별 문서.]]</p></div>
-      <div class="card"><div class="ico">🧠</div><h3>검증된 AI 프롬프트 팩</h3><p class="muted">[[__용 프롬프트 30개 — 상황별 복붙.]]</p></div>
-      <div class="card"><div class="ico">🎁</div><h3>보너스 스와이프 파일</h3><p class="muted">[[바로 쓰는 예시 · 변형 프롬프트 · FAQ.]]</p></div>
-      <div class="card"><div class="ico">🔄</div><h3>평생 업데이트</h3><p class="muted">[[새 템플릿이 추가되면 무료로 계속 받습니다.]]</p></div>
+      <div class="card"><div class="ico">⚡</div><h3>60-Second Auto-Reply</h3><p class="muted">Missed-call-to-text and enquiry auto-responder templates, so every lead hears back instantly — even mid-job.</p></div>
+      <div class="card"><div class="ico">🧾</div><h3>Instant Quote Drafts</h3><p class="muted">Paste the job details, get a professional quote written in your voice in seconds. Copy, tweak, send.</p></div>
+      <div class="card"><div class="ico">⭐</div><h3>Review Request Engine</h3><p class="muted">Automatic "How'd we go?" follow-ups that turn finished jobs into 5-star Google reviews.</p></div>
+      <div class="card"><div class="ico">🔁</div><h3>Follow-Up Sequences</h3><p class="muted">Polite nudges for quotes you sent but never heard back on — win back the jobs you'd have lost.</p></div>
+      <div class="card"><div class="ico">🎬</div><h3>Setup Videos</h3><p class="muted">Short, no-jargon screen recordings. If you can copy and paste, you can set this up.</p></div>
+      <div class="card"><div class="ico">🧠</div><h3>30 Ready-to-Use Prompts</h3><p class="muted">Enquiries, quotes, reminders, reviews, complaints — a proven prompt for every message you send.</p></div>
     </div>
   </div>
 </section>
@@ -141,18 +139,23 @@
 <!-- =========== OUTCOME =========== -->
 <section>
   <div class="wrap">
-    <h2>결과</h2>
+    <h2>What changes on Monday</h2>
     <div class="grid g2">
       <ul class="check">
-        <li>[[성과 1 — 예: 콘텐츠 제작 시간 90% 절감]]</li>
-        <li>[[성과 2 — 예: 문의 응대 자동 초안화]]</li>
-        <li>[[성과 3 — 예: 세팅 하루, 이후 무인 운영]]</li>
-        <li>[[성과 4 — 예: 절약한 시간을 매출 활동에]]</li>
+        <li>Every enquiry gets a reply in under a minute — day or night.</li>
+        <li>Quotes go out in minutes, not after dinner.</li>
+        <li>Your Google reviews start climbing on autopilot.</li>
+        <li>You win back the hours you were losing to your inbox.</li>
       </ul>
       <div class="card quote">
-        “[[구매자 후기 한 문장 — 없으면 베타 사용자에게 받아 채우기]]”
-        <div class="who">— [[이름, 직군]]</div>
+        “I set it up on a Sunday arvo. First week I booked two jobs I'd normally have missed because I couldn't get to the phone. Paid for itself ten times over.”
+        <div class="who">— [[Beta user — replace with a real review once you have one]]</div>
       </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat center"><b>&lt;60s</b><span>reply time</span></div>
+      <div class="stat center"><b>~1 hr</b><span>to set up</span></div>
+      <div class="stat center"><b>A$0</b><span>monthly fees</span></div>
     </div>
   </div>
 </section>
@@ -160,45 +163,46 @@
 <!-- =========== PRICING =========== -->
 <section id="pricing">
   <div class="wrap center">
-    <h2>가격</h2>
-    <p class="lead">[[얼리버드 안내 — 예: 런칭 기념 30% 할인, __까지]]</p>
+    <h2>Simple, one-time price</h2>
+    <p class="lead">Launch offer — 30% off the Full Kit this week only.</p>
     <div class="price-grid" style="text-align:left">
       <div class="tier">
-        <h3>스타터</h3>
-        <div class="amt">[[$29]]</div>
+        <h3>Starter</h3>
+        <div class="amt">A$29</div>
         <ul>
-          <li>[[핵심 템플릿 세트]]</li>
-          <li>[[프롬프트 팩]]</li>
-          <li>이메일 지원</li>
+          <li>30 ready-to-use prompts</li>
+          <li>Quote &amp; reply templates</li>
+          <li>Email support</li>
         </ul>
-        <a class="btn ghost" href="[[GUMROAD_L1_또는_스타터링크]]">선택하기</a>
+        <a class="btn ghost" href="[[GUMROAD_STARTER_LINK]]">Get Starter</a>
       </div>
       <div class="tier best">
-        <span class="tag">가장 인기</span>
-        <h3>풀 키트</h3>
-        <div class="amt">[[$59]] <small>1회 결제</small></div>
+        <span class="tag">Most popular</span>
+        <h3>Full Kit</h3>
+        <div class="amt">A$59 <small>one-time</small></div>
         <ul>
-          <li>스타터의 모든 것 +</li>
-          <li>[[셋업 영상 전체]]</li>
-          <li>[[주간 운영 SOP]]</li>
-          <li>[[보너스 스와이프 파일]]</li>
-          <li>평생 업데이트</li>
+          <li>Everything in Starter, plus</li>
+          <li>Missed-call-to-text automation blueprint</li>
+          <li>Review &amp; follow-up sequences</li>
+          <li>Step-by-step setup videos</li>
+          <li>Weekly-run SOP + lifetime updates</li>
         </ul>
-        <a class="btn" href="[[GUMROAD_L2_구매링크]]">지금 구매</a>
+        <a class="btn" href="[[GUMROAD_FULLKIT_LINK]]">Get the Full Kit</a>
       </div>
       <div class="tier">
-        <h3>[[프로 / 셋업 대행]]</h3>
-        <div class="amt">[[$490]]<small>/건 또는 /월</small></div>
+        <h3>Done-For-You Setup</h3>
+        <div class="amt">A$490<small>/one-off</small></div>
         <ul>
-          <li>풀 키트의 모든 것 +</li>
-          <li>[[1:1 셋업 대행 또는 구독 커뮤니티]]</li>
-          <li>[[우선 지원]]</li>
+          <li>Everything in the Full Kit, plus</li>
+          <li>We install it in your business in 72 hrs</li>
+          <li>Connected to your number &amp; Google</li>
+          <li>Priority support</li>
         </ul>
-        <a class="btn ghost" href="[[L3_문의/구매링크]]">문의하기</a>
+        <a class="btn ghost" href="[[DFY_ENQUIRY_LINK]]">Book a setup</a>
       </div>
     </div>
     <div class="guarantee" style="margin-top:28px">
-      <strong>7일 환불 보장</strong> — 도움이 안 되면 이유 불문 100% 환불. 리스크는 저희가 집니다.
+      <strong>7-day money-back guarantee</strong> — if it doesn't help you catch more leads, email us for a full refund. No questions asked.
     </div>
   </div>
 </section>
@@ -206,23 +210,23 @@
 <!-- =========== FREE LEAD MAGNET =========== -->
 <section id="free">
   <div class="wrap center">
-    <h2>먼저 무료로 체험</h2>
-    <p class="lead">[[무료 L1 이름]]을 받아보고 결정하세요. 이메일만 입력하면 즉시 발송.</p>
-    <a class="btn" href="[[GUMROAD_L1_무료링크 또는 이메일폼]]">무료 키트 받기 →</a>
-    <p class="trust">스팸 없음. 언제든 구독 취소.</p>
+    <h2>Not ready? Start free.</h2>
+    <p class="lead">Get <strong>7 Copy-Paste AI Prompts That Turn Enquiries Into Booked Jobs</strong> — sent to your inbox instantly. Try them today, decide later.</p>
+    <a class="btn" href="[[GUMROAD_FREE_L1_LINK]]">Send me the 7 free prompts →</a>
+    <p class="trust">No spam. Unsubscribe anytime.</p>
   </div>
 </section>
 
 <!-- =========== FAQ =========== -->
 <section>
   <div class="wrap">
-    <h2 class="center">자주 묻는 질문</h2>
+    <h2 class="center">Questions, sorted</h2>
     <div style="max-width:720px;margin:24px auto 0">
-      <details><summary>코딩을 몰라도 되나요?</summary><p class="muted">[[네. 복사·붙여넣기와 따라하기 영상만으로 세팅됩니다.]]</p></details>
-      <details><summary>어떤 도구가 필요한가요?</summary><p class="muted">[[대부분 무료 티어로 충분합니다. 필요한 도구 목록을 키트에 포함했습니다.]]</p></details>
-      <details><summary>세팅에 얼마나 걸리나요?</summary><p class="muted">[[처음 세팅 약 __시간, 이후는 자동입니다.]]</p></details>
-      <details><summary>환불되나요?</summary><p class="muted">네. 7일 이내 이유 불문 100% 환불합니다.</p></details>
-      <details><summary>업데이트는요?</summary><p class="muted">[[풀 키트 이상은 평생 무료 업데이트를 받습니다.]]</p></details>
+      <details><summary>Do I need to be techy?</summary><p class="muted">No. If you can copy, paste, and follow a short video, you can set this up. Everything is written in plain English — no jargon.</p></details>
+      <details><summary>What tools do I need?</summary><p class="muted">The prompts work with any free AI chatbot. The automations use tools that have free plans — we list exactly what to use and how to connect them.</p></details>
+      <details><summary>How long does setup take?</summary><p class="muted">About an hour for the full automation. The prompts themselves work the moment you download them.</p></details>
+      <details><summary>Will this work for my trade?</summary><p class="muted">Yes — it's built for any local service business: plumbing, electrical, cleaning, landscaping, mobile mechanics, pest control, and more.</p></details>
+      <details><summary>What if it's not for me?</summary><p class="muted">Email within 7 days and we'll refund you in full. You keep the free prompts.</p></details>
     </div>
   </div>
 </section>
@@ -230,16 +234,16 @@
 <!-- =========== FINAL CTA =========== -->
 <section class="center">
   <div class="wrap">
-    <h2>[[반복업무]]에 쓰던 시간, 이제 돌려받으세요</h2>
-    <p class="lead center">오늘 세팅하고, 내일부터 자동으로.</p>
-    <a class="btn" href="[[GUMROAD_L2_구매링크]]">지금 시작하기 — [[$59]]</a>
+    <h2>Stop letting the phone cost you jobs</h2>
+    <p class="lead center">Set it up this weekend. Start catching every lead on Monday.</p>
+    <a class="btn" href="[[GUMROAD_FULLKIT_LINK]]">Get the Kit — A$59</a>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    © <span id="yr"></span> [[브랜드/이름]] · <a href="mailto:[[이메일]]">문의</a> · <a href="[[환불정책/약관]]">약관</a>
-    <p style="margin-top:8px">[[사업자/연락처 표기 — 결제 플랫폼 요구 시]]</p>
+    © <span id="yr"></span> ReplyFast · <a href="mailto:[[YOUR_EMAIL]]">Contact</a> · <a href="[[TERMS_LINK]]">Terms &amp; Refunds</a>
+    <p style="margin-top:8px">[[Your business name / ABN — add if your payment processor requires it]]</p>
   </div>
 </footer>
 
