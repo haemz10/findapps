@@ -15,7 +15,8 @@ AI 자동화를 활용한 **디지털 상품 / 자동화 서비스 판매**로 �
 | [`STRATEGY.md`](STRATEGY.md) | 전체 수익 구조 · 3층 오퍼 · $3k 도달 수학 · 8주 로드맵 |
 | [`landing/index.html`](landing/index.html) | **실제 카피로 채운** 세일즈 랜딩 페이지 (링크 `[[...]]`만 교체) |
 | [`product/l1-free-kit.md`](product/l1-free-kit.md) | **완성된 무료 L1 리드 마그넷** — 바로 쓰는 프롬프트 7개 |
-| [`product/full-kit/`](product/full-kit) | **완성된 L2 풀 키트($59)** — 아래 5개 모듈 |
+| [`product/full-kit/`](product/full-kit) | **완성된 L2 풀 키트($59)** — 5개 모듈 |
+| [`product/l3-setup-service/`](product/l3-setup-service) | **완성된 L3 셋업 대행($490)** — 운영 패키지 5개 문서 |
 | [`product/outline.md`](product/outline.md) | L1·L2·L3 상품 제작 틀 |
 | [`playbook/30-day-launch.md`](playbook/30-day-launch.md) | 주차별 실행 체크리스트 + 배포법 |
 | [`playbook/content-engine.md`](playbook/content-engine.md) | AI 콘텐츠 자동 유입 파이프라인 |
@@ -30,6 +31,17 @@ AI 자동화를 활용한 **디지털 상품 / 자동화 서비스 판매**로 �
 | `04-weekly-sop.md` | 주 15분 운영 루틴 + 지표 해석 + 90일 목표 |
 
 > 판매 전 남은 것: ① 각 모듈의 `[[플레이스홀더]]`(이메일·링크) 교체 ② 셋업 화면녹화 영상 2~3개 촬영 ③ 5개 파일을 PDF/Notion으로 묶어 Gumroad에 $59 등록.
+
+## L3 셋업 대행 서비스 (`product/l3-setup-service/`) — 완성됨, 바로 운영 가능
+| 문서 | 내용 |
+|---|---|
+| `00-service-overview.md` | 오퍼 정의 · 고정 범위 · 마진($490 = 실작업 3.5h) · Care 월 $290 업셀 |
+| `01-sales-script.md` | DM/이메일 오프너 · 10분 상담 구조 · 이의 처리 5종 |
+| `02-onboarding-form.md` | 고객 인테이크 폼(Google Form/Tally) + 접근권한 체크리스트 |
+| `03-delivery-process.md` | 72시간 납품 체크리스트(시간대별) + 품질 기준 |
+| `04-service-agreement.md` | 서비스 계약서 틀 + Care 플랜 부록 *(법률자문 아님 — 검토 필요)* |
+
+> **$3k 도달 핵심:** 셋업 3건($1,470) + Care 5명($1,450) ≈ $2,920. Care(월 구독)가 매달 누적되며 안정적 MRR을 만듦.
 
 ## 지금 할 것 (오늘)
 1. `product/l1-free-kit.md`를 PDF/Notion으로 변환 → **Gumroad에 $0 상품**으로 등록(이메일 필수)
