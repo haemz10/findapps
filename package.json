@@ -1,0 +1,29 @@
+{
+  "name": "blog-automation",
+  "version": "0.1.0",
+  "description": "Tistory/Naver 블로그 자동화 - AI 콘텐츠 생성 + 자동 발행",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "generate": "node src/cli.js generate",
+    "publish": "node src/cli.js publish",
+    "run": "node src/cli.js run",
+    "login": "node src/cli.js login"
+  },
+  "keywords": [
+    "blog",
+    "automation",
+    "tistory",
+    "naver",
+    "playwright",
+    "ai"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "dotenv": "^16.4.7",
+    "playwright": "^1.49.1"
+  }
+}
