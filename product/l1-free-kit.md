@@ -1,6 +1,6 @@
 # 7 Copy-Paste AI Prompts That Turn Enquiries Into Booked Jobs
 
-### The free starter kit for local service businesses — from ReplyFast
+### The free starter kit for local service businesses — from Tradiepilot
 
 You don't need to be "good with AI." You just need the right words to paste in.
 
@@ -144,4 +144,4 @@ The full **Lead Response Kit** connects them so it runs on autopilot:
 *7-day money-back guarantee. You keep these 7 prompts either way.*
 
 ---
-*ReplyFast — never miss another lead.*
+*Tradiepilot — never miss another lead.*

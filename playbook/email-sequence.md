@@ -32,7 +32,7 @@ flat out on a job.
 
 Try it today and hit reply to let me know how it goes. I read every email.
 
-— [YOUR NAME], ReplyFast
+— [YOUR NAME], Tradiepilot
 
 P.S. Tomorrow I'll show you the one automation that catches the leads you're losing
 without even knowing it.
@@ -150,7 +150,7 @@ After tonight it goes back to full price. Grab it while it's 30% off:
 [[GUMROAD_FULLKIT_DISCOUNT_LINK]]
 
 Thanks for being here either way.
-— [YOUR NAME], ReplyFast
+— [YOUR NAME], Tradiepilot
 ```
 
 ---

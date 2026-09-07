@@ -68,7 +68,7 @@ underlying template library and methods remain ours.
 
 ## Care Plan add-on (optional attachment)
 
-**ReplyFast Care — A$290/month**
+**Tradiepilot Care — A$290/month**
 - Monthly check that all automations are running
 - We reply to your Google reviews (you approve tone once)
 - One monthly re-engagement message to past customers

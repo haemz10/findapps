@@ -39,7 +39,7 @@ Copy this checklist per client (duplicate it, tick as you go).
 - [ ] Walk them through the Leads sheet and each automation
 - [ ] Show the 1-page cheat sheet; explain the Monday 15-min routine (Module 4)
 - [ ] Send: cheat sheet + test recording + "what to do if X" quick FAQ
-- [ ] **Pitch ReplyFast Care ($290/month)** — monitoring, review replies, monthly re-engagement
+- [ ] **Pitch Tradiepilot Care ($290/month)** — monitoring, review replies, monthly re-engagement
 - [ ] Ask for a testimonial once they've seen it work (schedule a check-in in ~2 weeks)
 
 ---

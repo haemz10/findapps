@@ -1,4 +1,4 @@
-# ReplyFast — The Lead Response Kit
+# Tradiepilot — The Lead Response Kit
 ## Start Here (read this first — 5 minutes)
 
 Welcome. You just bought back your evenings and stopped leaking leads.
@@ -56,4 +56,4 @@ Questions? Email **[[YOUR_SUPPORT_EMAIL]]** — we reply within one business day
 
 *7-day money-back guarantee. If it doesn't help you catch more leads, email us for a full refund.*
 
-— ReplyFast
+— Tradiepilot

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ReplyFast Launch Board</title>
+<title>Tradiepilot Launch Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -141,7 +141,7 @@
 <div class="wrap">
   <header>
     <div>
-      <span class="eyebrow">Launch Control · ReplyFast</span>
+      <span class="eyebrow">Launch Control · Tradiepilot</span>
       <h1>Road to $3,000 / month</h1>
       <p>Your build-and-launch cockpit. Model the numbers, tick off the setup, and watch the passive-income machine come online.</p>
     </div>
@@ -271,10 +271,10 @@
     if(total>=GOAL){ st.className="status met"; st.innerHTML="🎉 Target cleared — <b>"+fmt(total-GOAL)+"</b> over goal. Now make it more passive by shifting weight to L2 sales."; }
     else { st.className="status"; st.innerHTML="<b>"+fmt(GOAL-total)+"</b> to go. Recurring Care revenue is the steadiest way to close the gap."; }
     var save={}; ids.forEach(function(id){ save[id]=getVal(id); });
-    store("rf_calc", JSON.stringify(save));
+    store("tp_calc", JSON.stringify(save));
   }
   (function restore(){
-    try{ var s=JSON.parse(store("rf_calc")); if(s){ ids.forEach(function(id){ if(typeof s[id]==="number") document.getElementById(id).value=s[id]; }); } }catch(e){}
+    try{ var s=JSON.parse(store("tp_calc")); if(s){ ids.forEach(function(id){ if(typeof s[id]==="number") document.getElementById(id).value=s[id]; }); } }catch(e){}
   })();
   ids.forEach(function(id){ document.getElementById(id).addEventListener("input", calc); });
   document.querySelectorAll(".stepper button").forEach(function(b){
@@ -315,7 +315,7 @@
     ]}
   ];
   var doneSet={};
-  try{ doneSet = JSON.parse(store("rf_tasks")||"{}") || {}; }catch(e){ doneSet={}; }
+  try{ doneSet = JSON.parse(store("tp_tasks")||"{}") || {}; }catch(e){ doneSet={}; }
 
   var host=document.getElementById("phases");
   PHASES.forEach(function(p, i){
@@ -356,7 +356,7 @@
     if(e.target.matches('input[type="checkbox"]')){
       doneSet[e.target.id]=e.target.checked;
       e.target.closest(".task").classList.toggle("done", e.target.checked);
-      store("rf_tasks", JSON.stringify(doneSet));
+      store("tp_tasks", JSON.stringify(doneSet));
       refresh();
     }
   });
@@ -367,7 +367,7 @@
   });
   document.getElementById("resetBtn").addEventListener("click", function(){
     if(!confirm("Clear all checklist progress?")) return;
-    doneSet={}; store("rf_tasks","{}");
+    doneSet={}; store("tp_tasks","{}");
     document.querySelectorAll('.task input').forEach(function(c){ c.checked=false; c.closest(".task").classList.remove("done"); });
     refresh();
   });

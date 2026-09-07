@@ -51,7 +51,7 @@ productized service: same deliverable every time, priced by value not hours.
 ## The value ladder continues here
 
 - **Order bump:** offer "+$200 and we'll also connect your website form & Facebook leads."
-- **The recurring upsell (this is the gold):** at handover, offer **ReplyFast Care — $290/month**:
+- **The recurring upsell (this is the gold):** at handover, offer **Tradiepilot Care — $290/month**:
   we monitor the automations, reply to reviews, send monthly re-engagement blasts, and tweak as
   they grow. *This turns one-off setups into MRR* — the fastest path to a stable $3,000/month.
 

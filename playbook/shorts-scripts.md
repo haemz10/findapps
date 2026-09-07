@@ -1,6 +1,6 @@
 # Promo Shorts — Scripts & Shot Lists (TikTok / Reels / YouTube Shorts)
 
-5 ready-to-shoot scripts for the ReplyFast content engine. Each is 15–30s, vertical (9:16),
+5 ready-to-shoot scripts for the Tradiepilot content engine. Each is 15–30s, vertical (9:16),
 hook in the first 2 seconds, one CTA: **"Free 7 prompts → link in bio."**
 
 **How to use:**
