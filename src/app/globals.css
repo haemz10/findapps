@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+
+  --color-ink: #e8eef7;
+  --color-ink-dim: #93a3bb;
+  --color-ink-faint: #5d6b82;
+  --color-glass: #0d1420;
+  --color-abyss: #03060c;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* 시간대에 따라 JS가 갈아끼운다 */
+  --room-top: #0a0e1a;
+  --room-bottom: #04060c;
+  --water-top: #123a5e;
+  --water-bottom: #050d17;
+  --tank-light: 0.85;
+  --darkness: 0.86;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--color-abyss);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overscroll-behavior: none;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 스크롤바 — 어둠에 녹아들게 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.08);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.16);
+}
+
+/* ─────────────  애니메이션  ───────────── */
+
+@keyframes fin-wave {
+  0%,
+  100% {
+    transform: rotate(calc(-1deg * var(--flow, 1))) scaleY(1);
+  }
+  50% {
+    transform: rotate(calc(3deg * var(--flow, 1))) scaleY(1.045);
+  }
+}
+
+@keyframes tail-sway {
+  0%,
+  100% {
+    transform: rotate(calc(-7deg * var(--flow, 1))) skewY(calc(-2deg * var(--flow, 1)));
+  }
+  50% {
+    transform: rotate(calc(7deg * var(--flow, 1))) skewY(calc(2deg * var(--flow, 1)));
+  }
+}
+
+@keyframes pectoral-flutter {
+  0%,
+  100% {
+    transform: rotate(-14deg) scaleX(0.92);
+  }
+  50% {
+    transform: rotate(16deg) scaleX(1.06);
+  }
+}
+
+@keyframes gill-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scaleX(1);
+  }
+  45% {
+    opacity: 0.6;
+    transform: scaleX(1.09);
+  }
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.6);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--bubble-opacity, 0.5);
+  }
+  85% {
+    opacity: var(--bubble-opacity, 0.5);
+  }
+  100% {
+    transform: translate3d(var(--drift, 6px), calc(-1 * var(--rise, 320px)), 0) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes caustic-drift {
+  0% {
+    transform: translate3d(-4%, 0, 0) scale(1.15);
+  }
+  50% {
+    transform: translate3d(4%, 2%, 0) scale(1.22);
+  }
+  100% {
+    transform: translate3d(-4%, 0, 0) scale(1.15);
+  }
+}
+
+@keyframes plant-sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes food-sink {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--sink, 240px)) rotate(140deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sleep-z {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7);
+  }
+  25% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(16px, -34px) scale(1.1);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 접근성: 움직임을 줄여달라고 한 사용자에게는 흔들림을 멈춘다 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
