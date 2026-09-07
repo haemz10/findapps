@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tradiepilot — Never Miss Another Lead</title>
+<meta name="description" content="The AI automation kit for local service businesses. Reply to every enquiry in 60 seconds, draft quotes in minutes, and get more 5-star reviews — on autopilot.">
+<style>
+  :root{
+    --bg:#ffffff; --fg:#101418; --muted:#5a6472; --line:#e7ebf0;
+    --card:#f7f9fc; --brand:#2563eb; --brand-fg:#ffffff; --accent:#0ea5a4;
+    --shadow:0 1px 2px rgba(16,20,24,.06),0 8px 24px rgba(16,20,24,.06);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#0e1116;--fg:#e8ecf2;--muted:#9aa4b2;--line:#232a33;
+    --card:#161b22;--brand:#4f8cff;--accent:#2dd4bf;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.4);}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:inherit}
+  .btn{display:inline-block;background:var(--brand);color:var(--brand-fg);
+    padding:15px 30px;border-radius:12px;text-decoration:none;font-weight:700;
+    font-size:1.05rem;box-shadow:var(--shadow);transition:transform .12s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);box-shadow:none}
+  .muted{color:var(--muted)}
+  .center{text-align:center}
+
+  header.hero{padding:72px 0 56px;text-align:center;
+    background:radial-gradient(1000px 400px at 50% -10%, color-mix(in srgb,var(--brand) 14%, transparent), transparent)}
+  .pill{display:inline-block;font-size:.82rem;font-weight:600;color:var(--brand);
+    background:color-mix(in srgb,var(--brand) 12%, transparent);
+    padding:6px 14px;border-radius:999px;margin-bottom:22px}
+  h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin:.2em 0;letter-spacing:-.02em}
+  .sub{font-size:clamp(1.05rem,2.2vw,1.3rem);color:var(--muted);max-width:660px;margin:18px auto 30px}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .trust{margin-top:18px;font-size:.9rem;color:var(--muted)}
+
+  section{padding:56px 0;border-top:1px solid var(--line)}
+  h2{font-size:clamp(1.5rem,3.5vw,2.1rem);letter-spacing:-.01em;margin:0 0 8px}
+  .lead{color:var(--muted);max-width:640px;margin:0 0 32px}
+  .center .lead{margin-left:auto;margin-right:auto}
+
+  .grid{display:grid;gap:18px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:26px;box-shadow:var(--shadow)}
+  .card h3{margin:.2em 0 .4em;font-size:1.15rem}
+  .ico{font-size:1.6rem}
+
+  ul.check{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+  ul.check li{padding-left:32px;position:relative}
+  ul.check li::before{content:"✓";position:absolute;left:0;top:0;color:var(--accent);font-weight:800}
+  ul.pain li::before{content:"✕";color:#e5484d}
+
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+  @media(max-width:820px){.price-grid{grid-template-columns:1fr}}
+  .tier{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:28px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+  .tier.best{border:2px solid var(--brand);position:relative}
+  .tier.best .tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    background:var(--brand);color:var(--brand-fg);font-size:.75rem;font-weight:700;
+    padding:5px 14px;border-radius:999px}
+  .tier .amt{font-size:2.4rem;font-weight:800;margin:.1em 0}
+  .tier .amt small{font-size:1rem;font-weight:500;color:var(--muted)}
+  .tier ul{list-style:none;padding:0;margin:16px 0 24px;display:grid;gap:10px;flex:1}
+  .tier ul li{padding-left:26px;position:relative;font-size:.96rem}
+  .tier ul li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
+  .tier .btn{width:100%;text-align:center}
+
+  details{border:1px solid var(--line);border-radius:12px;padding:16px 20px;background:var(--card);margin-bottom:12px}
+  details summary{cursor:pointer;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details[open] summary{margin-bottom:10px}
+
+  .guarantee{background:color-mix(in srgb,var(--accent) 10%,transparent);
+    border:1px dashed var(--accent);border-radius:16px;padding:24px;text-align:center}
+  .stat-row{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .stat b{display:block;font-size:1.9rem;color:var(--brand)}
+  .stat span{font-size:.85rem;color:var(--muted)}
+
+  footer{padding:40px 0 60px;text-align:center;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+  .quote{font-size:1.05rem}
+  .quote .who{color:var(--muted);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- =========== HERO =========== -->
+<header class="hero">
+  <div class="wrap">
+    <span class="pill">For plumbers, sparkies, cleaners, landscapers &amp; local trades</span>
+    <h1>Every missed call is a job<br>your competitor just won.</h1>
+    <p class="sub">Tradiepilot is the plug-and-play AI kit that replies to every enquiry in 60 seconds, drafts your quotes, and asks for 5-star reviews — automatically. Set it up once this weekend. No coding, no monthly agency fees.</p>
+    <div class="cta-row">
+      <a class="btn" href="[[GUMROAD_FULLKIT_LINK]]">Get the Kit — A$59</a>
+      <a class="btn ghost" href="#free">Grab 7 free prompts first</a>
+    </div>
+    <p class="trust">⭐️ Built for Aussie service businesses · 7-day money-back guarantee · Instant download</p>
+  </div>
+</header>
+
+<!-- =========== PAIN =========== -->
+<section>
+  <div class="wrap">
+    <h2>You're losing jobs and you can't even see it happening</h2>
+    <p class="lead">When you're up a ladder or under a sink, the phone wins the war for you.</p>
+    <ul class="check pain" style="max-width:600px">
+      <li>A lead calls, you can't answer, they ring the next business — and never call back.</li>
+      <li>You spend your nights typing the same quotes and replies over and over.</li>
+      <li>Happy customers would leave a review… if you ever remembered to ask.</li>
+      <li>You know "AI" could help, but you don't have time to figure out where to start.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- =========== WHAT'S INSIDE =========== -->
+<section>
+  <div class="wrap">
+    <h2>The Lead Response Kit</h2>
+    <p class="lead">Everything set up in an afternoon. Then it runs while you work.</p>
+    <div class="grid g3">
+      <div class="card"><div class="ico">⚡</div><h3>60-Second Auto-Reply</h3><p class="muted">Missed-call-to-text and enquiry auto-responder templates, so every lead hears back instantly — even mid-job.</p></div>
+      <div class="card"><div class="ico">🧾</div><h3>Instant Quote Drafts</h3><p class="muted">Paste the job details, get a professional quote written in your voice in seconds. Copy, tweak, send.</p></div>
+      <div class="card"><div class="ico">⭐</div><h3>Review Request Engine</h3><p class="muted">Automatic "How'd we go?" follow-ups that turn finished jobs into 5-star Google reviews.</p></div>
+      <div class="card"><div class="ico">🔁</div><h3>Follow-Up Sequences</h3><p class="muted">Polite nudges for quotes you sent but never heard back on — win back the jobs you'd have lost.</p></div>
+      <div class="card"><div class="ico">🎬</div><h3>Setup Videos</h3><p class="muted">Short, no-jargon screen recordings. If you can copy and paste, you can set this up.</p></div>
+      <div class="card"><div class="ico">🧠</div><h3>30 Ready-to-Use Prompts</h3><p class="muted">Enquiries, quotes, reminders, reviews, complaints — a proven prompt for every message you send.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== OUTCOME =========== -->
+<section>
+  <div class="wrap">
+    <h2>What changes on Monday</h2>
+    <div class="grid g2">
+      <ul class="check">
+        <li>Every enquiry gets a reply in under a minute — day or night.</li>
+        <li>Quotes go out in minutes, not after dinner.</li>
+        <li>Your Google reviews start climbing on autopilot.</li>
+        <li>You win back the hours you were losing to your inbox.</li>
+      </ul>
+      <div class="card quote">
+        “I set it up on a Sunday arvo. First week I booked two jobs I'd normally have missed because I couldn't get to the phone. Paid for itself ten times over.”
+        <div class="who">— [[Beta user — replace with a real review once you have one]]</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat center"><b>&lt;60s</b><span>reply time</span></div>
+      <div class="stat center"><b>~1 hr</b><span>to set up</span></div>
+      <div class="stat center"><b>A$0</b><span>monthly fees</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== PRICING =========== -->
+<section id="pricing">
+  <div class="wrap center">
+    <h2>Simple, one-time price</h2>
+    <p class="lead">Launch offer — 30% off the Full Kit this week only.</p>
+    <div class="price-grid" style="text-align:left">
+      <div class="tier">
+        <h3>Starter</h3>
+        <div class="amt">A$29</div>
+        <ul>
+          <li>30 ready-to-use prompts</li>
+          <li>Quote &amp; reply templates</li>
+          <li>Email support</li>
+        </ul>
+        <a class="btn ghost" href="[[GUMROAD_STARTER_LINK]]">Get Starter</a>
+      </div>
+      <div class="tier best">
+        <span class="tag">Most popular</span>
+        <h3>Full Kit</h3>
+        <div class="amt">A$59 <small>one-time</small></div>
+        <ul>
+          <li>Everything in Starter, plus</li>
+          <li>Missed-call-to-text automation blueprint</li>
+          <li>Review &amp; follow-up sequences</li>
+          <li>Step-by-step setup videos</li>
+          <li>Weekly-run SOP + lifetime updates</li>
+        </ul>
+        <a class="btn" href="[[GUMROAD_FULLKIT_LINK]]">Get the Full Kit</a>
+      </div>
+      <div class="tier">
+        <h3>Done-For-You Setup</h3>
+        <div class="amt">A$490<small>/one-off</small></div>
+        <ul>
+          <li>Everything in the Full Kit, plus</li>
+          <li>We install it in your business in 72 hrs</li>
+          <li>Connected to your number &amp; Google</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="btn ghost" href="[[DFY_ENQUIRY_LINK]]">Book a setup</a>
+      </div>
+    </div>
+    <div class="guarantee" style="margin-top:28px">
+      <strong>7-day money-back guarantee</strong> — if it doesn't help you catch more leads, email us for a full refund. No questions asked.
+    </div>
+  </div>
+</section>
+
+<!-- =========== FREE LEAD MAGNET =========== -->
+<section id="free">
+  <div class="wrap center">
+    <h2>Not ready? Start free.</h2>
+    <p class="lead">Get <strong>7 Copy-Paste AI Prompts That Turn Enquiries Into Booked Jobs</strong> — sent to your inbox instantly. Try them today, decide later.</p>
+    <a class="btn" href="[[GUMROAD_FREE_L1_LINK]]">Send me the 7 free prompts →</a>
+    <p class="trust">No spam. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<!-- =========== FAQ =========== -->
+<section>
+  <div class="wrap">
+    <h2 class="center">Questions, sorted</h2>
+    <div style="max-width:720px;margin:24px auto 0">
+      <details><summary>Do I need to be techy?</summary><p class="muted">No. If you can copy, paste, and follow a short video, you can set this up. Everything is written in plain English — no jargon.</p></details>
+      <details><summary>What tools do I need?</summary><p class="muted">The prompts work with any free AI chatbot. The automations use tools that have free plans — we list exactly what to use and how to connect them.</p></details>
+      <details><summary>How long does setup take?</summary><p class="muted">About an hour for the full automation. The prompts themselves work the moment you download them.</p></details>
+      <details><summary>Will this work for my trade?</summary><p class="muted">Yes — it's built for any local service business: plumbing, electrical, cleaning, landscaping, mobile mechanics, pest control, and more.</p></details>
+      <details><summary>What if it's not for me?</summary><p class="muted">Email within 7 days and we'll refund you in full. You keep the free prompts.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- =========== FINAL CTA =========== -->
+<section class="center">
+  <div class="wrap">
+    <h2>Stop letting the phone cost you jobs</h2>
+    <p class="lead center">Set it up this weekend. Start catching every lead on Monday.</p>
+    <a class="btn" href="[[GUMROAD_FULLKIT_LINK]]">Get the Kit — A$59</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    © <span id="yr"></span> Tradiepilot · <a href="mailto:[[YOUR_EMAIL]]">Contact</a> · <a href="[[TERMS_LINK]]">Terms &amp; Refunds</a>
+    <p style="margin-top:8px">[[Your business name / ABN — add if your payment processor requires it]]</p>
+  </div>
+</footer>
+
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+</body>
+</html>

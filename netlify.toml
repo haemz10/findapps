@@ -1,0 +1,11 @@
+# Netlify config — connect the repo once and every push auto-deploys.
+# No build step needed (static site).
+
+[build]
+  publish = "."
+  command = ""
+
+[[redirects]]
+  from = "/"
+  to = "/landing/index.html"
+  status = 200
