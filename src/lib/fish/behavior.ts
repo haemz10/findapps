@@ -73,8 +73,8 @@ function pickTarget(a: FishActivity, mood: number): { x: number; y: number; z: n
     case "approaching":
     case "listening":
     case "speaking":
-      // 유리 바로 앞, 가운데 살짝 위
-      return { x: 0.44 + (r - 0.5) * 0.14, y: 0.36 + (Math.random() - 0.5) * 0.1, z: 0.92 };
+      // 유리 바로 앞, 가운데 아래쪽. 머리 위를 비워 말풍선이 앉을 자리를 만든다.
+      return { x: 0.46 + (r - 0.5) * 0.12, y: 0.64 + (Math.random() - 0.5) * 0.08, z: 0.92 };
     case "eating":
       return { x: 0.46 + (r - 0.5) * 0.26, y: 0.28 + Math.random() * 0.18, z: 0.78 };
     case "playing":

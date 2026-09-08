@@ -29,7 +29,9 @@ export function CrisisCard({
         <button
           onClick={onClose}
           aria-label="닫기"
-          className="shrink-0 rounded-lg px-2 py-1 text-[18px] leading-none text-sky-200/40 transition hover:text-sky-200"
+          type="button"
+          className="-mr-1 -mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full text-[20px]
+                     leading-none text-sky-200/40 transition hover:bg-white/8 hover:text-sky-200"
         >
           ×
         </button>
@@ -40,8 +42,9 @@ export function CrisisCard({
           <a
             key={r.name}
             href={r.href}
-            className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.04]
-                       px-3.5 py-2.5 transition hover:border-sky-300/30 hover:bg-white/[0.07]"
+            className="flex min-h-[56px] items-center justify-between rounded-xl border border-white/8
+                       bg-white/[0.04] px-4 transition hover:border-sky-300/30 hover:bg-white/[0.07]
+                       active:scale-[0.99]"
           >
             <div>
               <div className="text-[13px] text-ink">{r.name}</div>

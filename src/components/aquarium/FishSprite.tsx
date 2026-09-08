@@ -48,6 +48,9 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
     [design.bodyShape, design.finStyle]
   );
 
+  // 예전에 저장된 물고기에는 중간색이 없다 — 양 끝을 섞어서 채운다
+  const finMid = design.finMid ?? mixHex(design.finInner, design.finOuter, 0.5);
+
   const sleeping = activity === "sleeping";
   const flow = design.finFlow * (sleeping ? 0.25 : activity === "playing" ? 1.55 : 1);
   const beat = sleeping ? 6.4 : activity === "playing" ? 1.6 : activity === "eating" ? 2.1 : 3.6;
@@ -66,15 +69,15 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
         {/* 몸통 — 등은 진하고 배는 밝다 (실제 물고기의 countershading) */}
         <linearGradient id={g("body")} x1="0.42" y1="0" x2="0.58" y2="1">
           <stop offset="0%" stopColor={design.bodyBottom} />
-          <stop offset="16%" stopColor={design.bodyMid} />
-          <stop offset="52%" stopColor={design.bodyTop} />
-          <stop offset="86%" stopColor={design.bodyMid} />
+          <stop offset="22%" stopColor={design.bodyMid} />
+          <stop offset="50%" stopColor={design.bodyTop} />
+          <stop offset="62%" stopColor={design.bodyMid} />
           <stop offset="100%" stopColor={design.bodyBottom} />
         </linearGradient>
 
         {/* 머리 쪽 스포트라이트 */}
-        <radialGradient id={g("head")} cx="0.78" cy="0.34" r="0.44">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+        <radialGradient id={g("head")} cx="0.8" cy="0.3" r="0.4">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </radialGradient>
 
@@ -88,25 +91,29 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
         {/* 배쪽 반사 */}
         <linearGradient id={g("belly")} x1="0" y1="0.5" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.34" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.2" />
         </linearGradient>
 
-        {/* 지느러미 막 — 뿌리는 진하고 끝은 사라진다 */}
-        <radialGradient id={g("finTail")} cx="1" cy="0.5" r="1">
-          <stop offset="0%" stopColor={design.finInner} stopOpacity="0.86" />
-          <stop offset="38%" stopColor={design.finInner} stopOpacity="0.5" />
-          <stop offset="78%" stopColor={design.finOuter} stopOpacity="0.26" />
-          <stop offset="100%" stopColor={design.finOuter} stopOpacity="0.06" />
+        {/* 지느러미 막 — 뿌리에서 끝으로 가며 색이 번지고 투명해진다.
+            베타의 지느러미가 아름다운 이유는 이 색 번짐 때문이다. */}
+        <radialGradient id={g("finTail")} cx="1" cy="0.5" r="1.05">
+          <stop offset="0%" stopColor={design.finInner} stopOpacity="0.92" />
+          <stop offset="26%" stopColor={design.finInner} stopOpacity="0.66" />
+          <stop offset="56%" stopColor={finMid} stopOpacity="0.5" />
+          <stop offset="82%" stopColor={design.finOuter} stopOpacity="0.4" />
+          <stop offset="100%" stopColor={design.finOuter} stopOpacity="0.14" />
         </radialGradient>
-        <radialGradient id={g("finUp")} cx="0.5" cy="1" r="1">
-          <stop offset="0%" stopColor={design.finInner} stopOpacity="0.8" />
-          <stop offset="50%" stopColor={design.finInner} stopOpacity="0.42" />
-          <stop offset="100%" stopColor={design.finOuter} stopOpacity="0.1" />
+        <radialGradient id={g("finUp")} cx="0.5" cy="1" r="1.05">
+          <stop offset="0%" stopColor={design.finInner} stopOpacity="0.88" />
+          <stop offset="34%" stopColor={design.finInner} stopOpacity="0.6" />
+          <stop offset="66%" stopColor={finMid} stopOpacity="0.46" />
+          <stop offset="100%" stopColor={design.finOuter} stopOpacity="0.18" />
         </radialGradient>
-        <radialGradient id={g("finDown")} cx="0.5" cy="0" r="1">
-          <stop offset="0%" stopColor={design.finInner} stopOpacity="0.8" />
-          <stop offset="50%" stopColor={design.finInner} stopOpacity="0.42" />
-          <stop offset="100%" stopColor={design.finOuter} stopOpacity="0.1" />
+        <radialGradient id={g("finDown")} cx="0.5" cy="0" r="1.05">
+          <stop offset="0%" stopColor={design.finInner} stopOpacity="0.88" />
+          <stop offset="34%" stopColor={design.finInner} stopOpacity="0.6" />
+          <stop offset="66%" stopColor={finMid} stopOpacity="0.46" />
+          <stop offset="100%" stopColor={design.finOuter} stopOpacity="0.18" />
         </radialGradient>
 
         {/* 홍채 */}
@@ -151,7 +158,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
           <FinGroup
             fin={geo.tail}
             fill={`url(#${g("finTail")})`}
-            rayColor={design.finOuter}
+            rayColor={finMid}
             origin="66px 90px"
             anim="tail-sway"
             dur={beat}
@@ -163,7 +170,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
           <FinGroup
             fin={geo.dorsal}
             fill={`url(#${g("finUp")})`}
-            rayColor={design.finOuter}
+            rayColor={finMid}
             origin={`130px ${AXIS_Y - m.depth * 0.86}px`}
             anim="fin-wave"
             dur={beat * 1.2}
@@ -175,7 +182,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
           <FinGroup
             fin={geo.anal}
             fill={`url(#${g("finDown")})`}
-            rayColor={design.finOuter}
+            rayColor={finMid}
             origin={`138px ${AXIS_Y + m.depth * m.bellyDrop * 0.86}px`}
             anim="fin-wave"
             dur={beat * 1.35}
@@ -193,7 +200,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
               <g
                 fill="none"
                 stroke="#ffffff"
-                strokeOpacity={design.scalePattern === "plain" ? 0 : 0.17}
+                strokeOpacity={design.scalePattern === "plain" ? 0 : 0.08}
                 strokeWidth="1.1"
                 strokeLinecap="round"
               >
@@ -204,7 +211,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
               <g
                 fill="none"
                 stroke="#04070e"
-                strokeOpacity={design.scalePattern === "plain" ? 0 : 0.13}
+                strokeOpacity={design.scalePattern === "plain" ? 0 : 0.07}
                 strokeWidth="1"
                 transform="translate(0 1.4)"
               >
@@ -269,8 +276,8 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
               d={geo.body}
               fill="none"
               stroke={design.bodyTop}
-              strokeOpacity="0.3"
-              strokeWidth="2.4"
+              strokeOpacity="0.2"
+              strokeWidth="2"
               style={{ filter: "blur(2px)" }}
             />
           </g>
@@ -279,18 +286,18 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
           <FinGroup
             fin={geo.ventral}
             fill={`url(#${g("finDown")})`}
-            rayColor={design.finOuter}
-            origin={`200px ${AXIS_Y + m.depth * 0.6}px`}
+            rayColor={finMid}
+            origin={`188px ${AXIS_Y + m.depth * 0.66}px`}
             anim="fin-wave"
             dur={beat * 0.9}
             flow={flow}
-            opacity={0.46}
+            opacity={0.3}
           />
 
           {/* ───── 가슴지느러미 ───── */}
           <g
             style={{
-              transformOrigin: `186px ${AXIS_Y + m.depth * 0.3}px`,
+              transformOrigin: `172px ${AXIS_Y + m.depth * 0.38}px`,
               animation: `pectoral-flutter ${beat * 0.5}s ease-in-out infinite`,
             }}
           >
@@ -355,12 +362,12 @@ function FinGroup({
       <path d={fin.membrane} fill={fill} />
       {/* 살 — 이게 있어야 종잇조각이 아니라 지느러미로 보인다 */}
       <g fill="none" strokeLinecap="round">
-        <g stroke={rayColor} strokeOpacity="0.42" strokeWidth="1.5">
+        <g stroke={rayColor} strokeOpacity="0.5" strokeWidth="1.6">
           {fin.rays.map((d, i) => (
             <path key={i} d={d} />
           ))}
         </g>
-        <g stroke="#ffffff" strokeOpacity="0.2" strokeWidth="0.7" transform="translate(0 -0.8)">
+        <g stroke="#ffffff" strokeOpacity="0.24" strokeWidth="0.7" transform="translate(0 -0.8)">
           {fin.rays.map((d, i) => (
             <path key={i} d={d} />
           ))}
@@ -435,17 +442,16 @@ function Eye({
 
   return (
     <g>
-      {/* 눈 주변 그늘 — 눈이 얼굴에 박혀 있게 */}
-      <ellipse cx={cx} cy={cy} rx={rx + 5} ry={ry + 5} fill="#03060c" fillOpacity="0.16" />
-      {/* 흰자 — 얇게 두른다 */}
-      <ellipse cx={cx} cy={cy} rx={rx + 1.6} ry={ry + 1.6} fill="#eef5ff" fillOpacity="0.9" />
+      {/* 눈두덩 — 얇고 어둡게. 흰 링을 두르면 만화 눈이 된다. */}
+      <ellipse cx={cx} cy={cy} rx={rx + 2.6} ry={ry + 2.6} fill="#0a1322" fillOpacity="0.55" />
+      <ellipse cx={cx} cy={cy} rx={rx + 1.1} ry={ry + 1.1} fill="#0a1322" fillOpacity="0.9" />
       {/* 홍채 */}
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry2} fill={`url(#${irisId})`} />
       {/* 동공 */}
-      <ellipse cx={cx} cy={cy} rx={rx * 0.52} ry={ry2 * 0.52} fill="#000" />
-      {/* 하이라이트 — 살아있음의 대부분이 여기서 온다 */}
-      <circle cx={cx - rx * 0.34} cy={cy - ry2 * 0.38} r={rx * 0.27} fill="#fff" fillOpacity="0.97" />
-      <circle cx={cx + rx * 0.36} cy={cy + ry2 * 0.32} r={rx * 0.14} fill="#fff" fillOpacity="0.62" />
+      <ellipse cx={cx} cy={cy} rx={rx * 0.44} ry={ry2 * 0.44} fill="#04070e" />
+      {/* 하이라이트 — 살아있음의 대부분이 여기서 온다. 크면 만화가 된다. */}
+      <circle cx={cx - rx * 0.36} cy={cy - ry2 * 0.42} r={rx * 0.2} fill="#fff" fillOpacity="0.98" />
+      <circle cx={cx + rx * 0.34} cy={cy + ry2 * 0.36} r={rx * 0.1} fill="#fff" fillOpacity="0.55" />
       {/* 각막 반사 */}
       <ellipse
         cx={cx}
@@ -479,18 +485,19 @@ function Mouth({
   speaking: boolean;
   depth: number;
 }) {
-  const x = 216;
-  const y = AXIS_Y + depth * 0.16;
+  const x = 222;
+  const y = AXIS_Y + depth * 0.2;
   const dur = "0.78s";
 
   if (shape === "pout") {
     return (
       <g>
-        <ellipse cx={x} cy={y} rx="6.5" ry="5.8" fill="#2a0d18" fillOpacity="0.3" />
-        <ellipse cx={x} cy={y} rx="5" ry="4.2" fill="#ff9db4" fillOpacity="0.38">
-          {speaking && <animate attributeName="ry" values="4.2;1.8;5;4.2" dur={dur} repeatCount="indefinite" />}
+        <ellipse cx={x} cy={y} rx="7.5" ry="6.4" fill="#3a1220" fillOpacity="0.35" />
+        <ellipse cx={x} cy={y} rx="6" ry="5" fill="#ff8fa8" fillOpacity="0.72">
+          {speaking && <animate attributeName="ry" values="5;2.2;5.8;5" dur={dur} repeatCount="indefinite" />}
         </ellipse>
-        <ellipse cx={x} cy={y - 1.5} rx="2.6" ry="1.2" fill="#fff" fillOpacity="0.28" />
+        <ellipse cx={x} cy={y + 1.2} rx="3.6" ry="2" fill="#c4536e" fillOpacity="0.4" />
+        <ellipse cx={x} cy={y - 1.8} rx="3" ry="1.4" fill="#fff" fillOpacity="0.4" />
       </g>
     );
   }
@@ -621,12 +628,12 @@ function ScaleFill({ id, design }: { id: string; design: FishDesign }) {
 
     case "speckle":
       return (
-        <pattern id={id} width="30" height="30" patternUnits="userSpaceOnUse">
-          <circle cx="6" cy="8" r="3.4" fill="#050a14" fillOpacity="0.26" />
-          <circle cx="21" cy="17" r="4.2" fill="#050a14" fillOpacity="0.2" />
-          <circle cx="12" cy="24" r="2.2" fill="#ffffff" fillOpacity="0.24" />
-          <circle cx="26" cy="5" r="1.8" fill="#ffffff" fillOpacity="0.2" />
-          <circle cx="2" cy="20" r="2.6" fill="#050a14" fillOpacity="0.16" />
+        <pattern id={id} width="19" height="19" patternUnits="userSpaceOnUse">
+          <circle cx="4" cy="5" r="1.7" fill="#ff9a5c" fillOpacity="0.4" />
+          <circle cx="13" cy="10" r="2.1" fill="#ffffff" fillOpacity="0.42" />
+          <circle cx="8" cy="16" r="1.3" fill="#ffb87a" fillOpacity="0.34" />
+          <circle cx="17" cy="3" r="1.1" fill="#ffffff" fillOpacity="0.3" />
+          <circle cx="1" cy="13" r="1.5" fill="#7fc4ff" fillOpacity="0.28" />
         </pattern>
       );
 
@@ -665,6 +672,22 @@ function ScaleFill({ id, design }: { id: string; design: FishDesign }) {
 }
 
 /* ─────────────────────────  유틸  ───────────────────────── */
+
+/** 두 색을 t 비율로 섞는다 */
+function mixHex(a: string, b: string, t: number): string {
+  const pa = parseHex(a);
+  const pb = parseHex(b);
+  if (!pa || !pb) return a;
+  const m = (i: number) => Math.round(pa[i] + (pb[i] - pa[i]) * t);
+  return `#${((m(0) << 16) | (m(1) << 8) | m(2)).toString(16).padStart(6, "0")}`;
+}
+
+function parseHex(hex: string): [number, number, number] | null {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
 
 /** #rrggbb 를 흰색 쪽으로 섞는다 */
 function lighten(hex: string, amount: number): string {

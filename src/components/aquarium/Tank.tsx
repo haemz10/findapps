@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Decor } from "./Decor";
 import { FishActor } from "./FishActor";
+import { SpeechBubble, splitGesture, type HeadPos } from "./SpeechBubble";
 import type { FishActivity, FishCue, FishDesign } from "@/lib/types";
 
 /**
@@ -23,6 +24,9 @@ interface Props {
   userTyping: boolean;
   tankLight: number;
   onEatFood: () => void;
+  /** 물고기가 지금 하고 있는 말 — 얼굴에서 말풍선으로 나온다 */
+  saying: string;
+  onDismissSaying: () => void;
 }
 
 export function Tank({
@@ -36,7 +40,11 @@ export function Tank({
   userTyping,
   tankLight,
   onEatFood,
+  saying,
+  onDismissSaying,
 }: Props) {
+  const [head, setHead] = useState<HeadPos | null>(null);
+  const { gestures, speech } = useMemo(() => splitGesture(saying), [saying]);
   // 물이 탁해지면 뿌옇고 누렇게
   const murk = 1 - clarity / 100;
 
@@ -86,7 +94,18 @@ export function Tank({
           hasFood={pendingFood > 0}
           userTyping={userTyping}
           onEatFood={onEatFood}
+          onHead={setHead}
         />
+
+        {saying && (
+          <SpeechBubble
+            head={head}
+            text={speech}
+            streaming={speaking}
+            gestures={gestures}
+            onDismiss={onDismissSaying}
+          />
+        )}
 
         <FoodPellets count={pendingFood} />
 

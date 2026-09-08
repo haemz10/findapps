@@ -31,8 +31,10 @@ export interface FishDesign {
   bodyTop: string;
   bodyMid: string;
   bodyBottom: string;
-  /** 지느러미 그라디언트 */
+  /** 지느러미 그라디언트 — 뿌리 → 중간 → 끝. 베타처럼 색이 번지게 하려면 셋이 필요하다. */
   finInner: string;
+  /** 예전 저장 데이터에는 없을 수 있다 */
+  finMid?: string;
   finOuter: string;
   /** 0.8 ~ 1.35 */
   size: number;

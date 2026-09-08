@@ -77,7 +77,7 @@ export function ChatDock({
     <div className="flex min-h-0 flex-1 flex-col">
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 space-y-4 overflow-y-auto px-1 pb-3"
+        className="scroll-y min-h-0 flex-1 space-y-4 px-1 pb-3"
       >
         {messages.length === 0 && !busy && (
           <p className="px-2 py-6 text-center text-[13px] leading-relaxed text-ink-faint">
@@ -109,7 +109,7 @@ export function ChatDock({
         )}
       </div>
 
-      <div className="relative mt-1 flex items-end gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-2 backdrop-blur">
+      <div className="relative mt-1 flex shrink-0 items-end gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-2 backdrop-blur">
         <textarea
           ref={taRef}
           rows={1}
@@ -122,14 +122,19 @@ export function ChatDock({
             }
           }}
           placeholder={awake ? "여기에 오늘을 적어보세요" : "말을 걸면 방이 어두워져요"}
-          className="max-h-[120px] flex-1 resize-none bg-transparent px-3 py-2 text-[15px] leading-relaxed
-                     text-ink outline-none placeholder:text-ink-faint"
+          enterKeyHint="send"
+          autoCapitalize="sentences"
+          autoCorrect="on"
+          spellCheck={false}
+          className="scroll-y max-h-[120px] min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5
+                     text-[16px] leading-relaxed text-ink outline-none placeholder:text-ink-faint"
         />
         <button
           onClick={submit}
           disabled={!input.trim() || busy}
           aria-label="보내기"
-          className="mb-0.5 shrink-0 rounded-xl bg-sky-300/85 px-4 py-2.5 text-[13px] font-semibold
+          type="button"
+          className="mb-0.5 h-11 shrink-0 rounded-xl bg-sky-300/85 px-5 text-[14px] font-semibold
                      text-slate-900 transition hover:bg-sky-200 active:scale-95
                      disabled:bg-white/8 disabled:text-ink-faint"
         >
@@ -188,6 +193,7 @@ function FishLine({
                        rounded-[2px] border-b border-l border-white/10 bg-[#0c1524]"
           />
           <div
+            data-selectable
             className="relative whitespace-pre-wrap text-pretty rounded-2xl rounded-bl-sm border
                        border-white/10 bg-[#0c1524] px-4 py-3 text-[15px] leading-[1.75]
                        text-ink shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
@@ -217,6 +223,7 @@ function UserLine({ text }: { text: string }) {
                      rounded-[2px] border-b border-r border-sky-200/18 bg-[#16283c]"
         />
         <div
+          data-selectable
           className="relative whitespace-pre-wrap rounded-2xl rounded-br-sm border border-sky-200/18
                      bg-[#16283c] px-4 py-2.5 text-[14.5px] leading-relaxed text-ink/90"
         >

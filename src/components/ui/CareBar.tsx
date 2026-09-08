@@ -1,11 +1,15 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { canChangeWater, canFeed, careHint } from "@/lib/care";
 import type { CareState } from "@/lib/types";
 
 /**
- * 돌봄 상태와 두 개의 행동. 게임 UI처럼 보이지 않게,
- * 수치는 작게 두고 물고기의 상태를 말로 알려준다.
+ * 돌봄 상태와 두 개의 행동.
+ *
+ * 모바일에서는 비활성 버튼이 최악이다 — 눌러도 아무 일이 없고, title 툴팁은 뜨지 않아서
+ * 왜 안 되는지 알 길이 없다. 그래서 버튼은 항상 누를 수 있게 두고, 아직 할 필요가
+ * 없을 때는 이유를 짧게 말해준다.
  */
 export function CareBar({
   care,
@@ -18,34 +22,67 @@ export function CareBar({
   onFeed: () => void;
   onWater: () => void;
 }) {
-  const hint = careHint(care);
+  const [note, setNote] = useState<string | null>(null);
+  const timer = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timer.current) window.clearTimeout(timer.current);
+    };
+  }, []);
+
+  const say = (msg: string) => {
+    setNote(msg);
+    if (timer.current) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setNote(null), 2600);
+  };
+
   const feedable = canFeed(care) && awake;
   const waterable = canChangeWater(care);
+  const hint = note ?? careHint(care);
+
+  const handleFeed = () => {
+    if (!awake) return say("자는 중이에요. 불을 끄면 깨어나요");
+    if (!canFeed(care)) return say("아직 배가 불러요");
+    onFeed();
+    say("먹이를 줬어요");
+  };
+
+  const handleWater = () => {
+    if (!waterable) return say("물이 아직 맑아요");
+    onWater();
+    say("물을 갈았어요");
+  };
 
   return (
-    <div className="flex items-center gap-2.5">
+    <div>
+      <div className="flex items-center gap-3">
       <Gauge label="배" value={care.fullness} hue={30} />
       <Gauge label="물" value={care.waterClarity} hue={190} />
 
       <div className="ml-auto flex items-center gap-2">
-        {hint && <span className="hidden text-[12px] text-amber-200/70 sm:inline">{hint}</span>}
-        <ActionButton
-          onClick={onFeed}
-          disabled={!feedable}
-          title={
-            !awake ? "자는 중이에요" : !canFeed(care) ? "아직 배가 불러요" : "먹이 주기"
-          }
-        >
+        {hint && (
+          <span
+            role="status"
+            className="hidden max-w-[9rem] truncate text-[12px] text-amber-200/75 sm:inline"
+          >
+            {hint}
+          </span>
+        )}
+        <ActionButton onClick={handleFeed} dim={!feedable}>
           먹이
         </ActionButton>
-        <ActionButton
-          onClick={onWater}
-          disabled={!waterable}
-          title={waterable ? "물 갈기" : "물이 아직 맑아요"}
-        >
+        <ActionButton onClick={handleWater} dim={!waterable}>
           물갈이
         </ActionButton>
+        </div>
       </div>
+      {/* 좁은 화면에서는 버튼 아래로 내려 보여준다 */}
+      {hint && (
+        <p role="status" className="mt-1.5 text-right text-[12px] text-amber-200/75 sm:hidden">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -53,13 +90,20 @@ export function CareBar({
 function Gauge({ label, value, hue }: { label: string; value: number; hue: number }) {
   const low = value < 35;
   return (
-    <div className="flex items-center gap-1.5" title={`${label} ${Math.round(value)}%`}>
+    <div
+      className="flex items-center gap-1.5"
+      role="meter"
+      aria-label={label}
+      aria-valuenow={Math.round(value)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
       <span className={`text-[11px] ${low ? "text-amber-200/80" : "text-ink-faint"}`}>{label}</span>
-      <div className="h-1 w-11 overflow-hidden rounded-full bg-white/10">
+      <div className="h-1.5 w-12 overflow-hidden rounded-full bg-white/10">
         <div
           className="h-full rounded-full transition-[width] duration-700"
           style={{
-            width: `${Math.max(2, value)}%`,
+            width: `${Math.max(3, value)}%`,
             background: low ? "hsl(38 80% 58%)" : `hsl(${hue} 62% 62%)`,
           }}
         />
@@ -68,25 +112,30 @@ function Gauge({ label, value, hue }: { label: string; value: number; hue: numbe
   );
 }
 
+/**
+ * 할 필요가 없을 때는 흐리게 보이되 여전히 눌린다.
+ * disabled 를 쓰면 터치에 아무 반응이 없어 고장난 것처럼 느껴진다.
+ */
 function ActionButton({
   children,
   onClick,
-  disabled,
-  title,
+  dim,
 }: {
   children: React.ReactNode;
   onClick: () => void;
-  disabled?: boolean;
-  title?: string;
+  /** 지금은 할 필요가 없다 — 흐리게 보이되 눌리기는 한다 */
+  dim?: boolean;
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className="rounded-full border border-white/10 bg-white/[0.05] px-3.5 py-1.5 text-[12px] text-ink-dim
-                 transition hover:border-white/20 hover:text-ink active:scale-95
-                 disabled:cursor-not-allowed disabled:border-white/5 disabled:text-ink-faint/50 disabled:hover:border-white/5"
+      className={`min-h-[44px] rounded-full border px-5 text-[13px] transition active:scale-95
+        ${
+          dim
+            ? "border-white/6 bg-white/[0.02] text-ink-faint/60"
+            : "border-white/12 bg-white/[0.06] text-ink-dim hover:border-white/25 hover:text-ink"
+        }`}
     >
       {children}
     </button>

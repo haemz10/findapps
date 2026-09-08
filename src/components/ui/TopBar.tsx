@@ -50,7 +50,7 @@ export function TopBar({
         </div>
       </div>
 
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
         <IconButton
           onClick={onToggleLight}
           active={!roomLightOn}
@@ -85,7 +85,8 @@ function IconButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className={`grid h-9 w-9 place-items-center rounded-full border transition active:scale-95
+      type="button"
+      className={`grid h-11 w-11 place-items-center rounded-full border transition active:scale-95
         ${
           active
             ? "border-sky-300/35 bg-sky-300/12 text-sky-100"
@@ -99,7 +100,7 @@ function IconButton({
 
 /* ── 아이콘 (인라인 SVG — 외부 의존성 없이) ── */
 
-const S = { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+const S = { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
 function SunIcon() {
   return (

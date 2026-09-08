@@ -22,7 +22,15 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
         onClick={onClose}
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
       />
-      <div className="relative flex max-h-[86dvh] w-full max-w-lg animate-fade-up flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#080d18] sm:rounded-3xl">
+      <div
+        className="relative flex max-h-[88dvh] w-full max-w-lg animate-fade-up flex-col overflow-hidden
+                   rounded-t-3xl border border-white/10 bg-[#080d18] sm:rounded-3xl"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        {/* 시트 손잡이 — 아래에서 올라온 창이라는 신호 */}
+        <div className="flex justify-center pt-2.5 sm:hidden">
+          <span className="block h-1 w-9 rounded-full bg-white/20" />
+        </div>
         <div className="flex items-center gap-2 border-b border-white/8 px-4 py-3">
           {(
             [
@@ -34,7 +42,8 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] transition ${
+              type="button"
+              className={`min-h-[42px] rounded-full px-4 text-[14px] transition ${
                 tab === t.id ? "bg-white/12 text-ink" : "text-ink-faint hover:text-ink-dim"
               }`}
             >
@@ -44,13 +53,15 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
           <button
             onClick={onClose}
             aria-label="닫기"
-            className="ml-auto rounded-lg px-2 py-1 text-[20px] leading-none text-ink-faint hover:text-ink"
+            type="button"
+            className="ml-auto grid h-11 w-11 place-items-center rounded-full text-[22px] leading-none
+                       text-ink-faint transition hover:bg-white/8 hover:text-ink active:scale-95"
           >
             ×
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
+        <div className="scroll-y min-h-0 flex-1 px-5 py-5">
           {tab === "memory" && (
             <div className="space-y-6">
               <div>
@@ -154,7 +165,8 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
                     <a
                       key={r.name}
                       href={r.href}
-                      className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] px-3.5 py-2.5 transition hover:border-white/18"
+                      className="flex min-h-[56px] items-center justify-between rounded-xl border border-white/8
+                                 bg-white/[0.03] px-4 transition hover:border-white/18 active:scale-[0.99]"
                     >
                       <div>
                         <div className="text-[13px] text-ink-dim">{r.name}</div>
@@ -170,7 +182,8 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
                 {!confirmReset ? (
                   <button
                     onClick={() => setConfirmReset(true)}
-                    className="text-[13px] text-red-300/60 transition hover:text-red-300"
+                    type="button"
+                    className="min-h-[44px] text-[14px] text-red-300/60 transition hover:text-red-300"
                   >
                     모두 지우고 처음부터 시작하기
                   </button>
@@ -185,13 +198,15 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
                           resetAll();
                           onClose();
                         }}
-                        className="rounded-lg bg-red-400/85 px-3.5 py-2 text-[13px] font-medium text-red-950"
+                        type="button"
+                        className="min-h-[44px] rounded-lg bg-red-400/85 px-4 text-[14px] font-medium text-red-950"
                       >
                         정말 지울게요
                       </button>
                       <button
                         onClick={() => setConfirmReset(false)}
-                        className="rounded-lg px-3.5 py-2 text-[13px] text-ink-dim"
+                        type="button"
+                        className="min-h-[44px] rounded-lg px-4 text-[14px] text-ink-dim"
                       >
                         취소
                       </button>

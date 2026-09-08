@@ -17,6 +17,7 @@ export const FishDesignSchema = z.object({
   bodyMid: z.string().max(24),
   bodyBottom: z.string().max(24),
   finInner: z.string().max(24),
+  finMid: z.string().max(24).optional(),
   finOuter: z.string().max(24),
   size: z.number().min(0.5).max(2),
   finFlow: z.number().min(0.3).max(2),

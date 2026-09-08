@@ -290,19 +290,19 @@ function comb(s: CombSpec): Fin {
 
 /** 꼬리지느러미 — 위/아래로 얼마나 벌어지는가 */
 const TAIL_SPREAD: Record<FinStyle, [number, number]> = {
-  veil: [42, 62],
-  crown: [56, 60],
-  halfmoon: [70, 70],
-  delta: [38, 40],
-  feather: [50, 64],
+  veil: [50, 68],
+  crown: [60, 64],
+  halfmoon: [76, 76],
+  delta: [40, 42],
+  feather: [56, 70],
 };
 
 const TAIL_LEN: Record<FinStyle, number> = {
-  veil: 76,
-  crown: 64,
-  halfmoon: 70,
-  delta: 60,
-  feather: 68,
+  veil: 104,
+  crown: 82,
+  halfmoon: 96,
+  delta: 72,
+  feather: 92,
 };
 
 const JITTER: Record<FinStyle, number> = {
@@ -322,7 +322,7 @@ const JITTER: Record<FinStyle, number> = {
 export function tailFin(style: FinStyle, shape: BodyShape): Fin {
   const [up, down] = TAIL_SPREAD[style];
   const b = BODY[shape];
-  const rootHalf = b.peduncle * 0.9;
+  const rootHalf = b.peduncle * 1.35;
   const rootX = TAIL_X + 8;
   const len = TAIL_LEN[style] + b.depth * 0.2;
   const mr = MEMBRANE_RATIO[style];
@@ -354,16 +354,18 @@ export function tailFin(style: FinStyle, shape: BodyShape): Fin {
 export function dorsalFin(style: FinStyle, shape: BodyShape): Fin {
   const { back, spec: b } = curves(shape);
   const long = style === "veil" || style === "halfmoon" || style === "feather";
+  const base = PROFILES[style];
   return comb({
     curve: back,
     // 등선은 꼬리(t=0) → 머리(t=1) 로 간다. 지느러미는 등 중간에서 꼬리쪽으로.
-    t0: 0.24,
-    t1: 0.74,
+    t0: 0.16,
+    t1: 0.68,
     side: -1,
-    len: (long ? 1.2 : 0.88) * (7 + b.depth * 0.44),
-    count: Math.max(9, Math.round(RAY_COUNT[style] * 0.72)),
-    profile: PROFILES[style],
-    sweep: -19,
+    len: (long ? 2.15 : 1.1) * (7 + b.depth * 0.44),
+    count: Math.max(11, Math.round(RAY_COUNT[style] * 0.95)),
+    // 머리 쪽은 낮고 꼬리 쪽으로 갈수록 높아진다 (t=0 이 꼬리 쪽)
+    profile: (t) => base(t) * (0.42 + 0.66 * (1 - t)),
+    sweep: -30,
     membraneRatio: MEMBRANE_RATIO[style],
     jitter: JITTER[style] * 0.6,
   });
@@ -372,16 +374,18 @@ export function dorsalFin(style: FinStyle, shape: BodyShape): Fin {
 export function analFin(style: FinStyle, shape: BodyShape): Fin {
   const { belly, spec: b } = curves(shape);
   const long = style === "veil" || style === "halfmoon";
+  const base = PROFILES[style];
   return comb({
     curve: belly,
     // 배선은 머리(t=0) → 꼬리(t=1) 로 간다
-    t0: 0.4,
-    t1: 0.86,
+    t0: 0.34,
+    t1: 0.9,
     side: 1,
-    len: (long ? 1.16 : 0.86) * (6 + b.depth * 0.4),
-    count: Math.max(9, Math.round(RAY_COUNT[style] * 0.68)),
-    profile: (t) => PROFILES[style](1 - t),
-    sweep: 17,
+    len: (long ? 1.95 : 1.05) * (6 + b.depth * 0.4),
+    count: Math.max(11, Math.round(RAY_COUNT[style] * 0.9)),
+    // 배선은 머리(t=0) → 꼬리(t=1). 꼬리 쪽이 길어야 부채가 이어진다.
+    profile: (t) => base(1 - t) * (0.42 + 0.66 * t),
+    sweep: 27,
     membraneRatio: MEMBRANE_RATIO[style],
     jitter: JITTER[style] * 0.6,
   });
@@ -391,10 +395,10 @@ export function analFin(style: FinStyle, shape: BodyShape): Fin {
 export function pectoralFin(shape: BodyShape): Fin {
   const b = BODY[shape];
   return fan({
-    origin: { x: 186, y: AXIS_Y + b.depth * 0.3 },
-    aFrom: 48,
-    aTo: 132,
-    len: 26 + b.depth * 0.22,
+    origin: { x: 172, y: AXIS_Y + b.depth * 0.38 },
+    aFrom: 52,
+    aTo: 128,
+    len: 16 + b.depth * 0.16,
     count: 9,
     profile: (t) => 0.66 + 0.4 * Math.sin(t * Math.PI),
     inset: 1,
@@ -405,10 +409,10 @@ export function pectoralFin(shape: BodyShape): Fin {
 export function ventralFin(shape: BodyShape): Fin {
   const b = BODY[shape];
   return fan({
-    origin: { x: 200, y: AXIS_Y + b.depth * 0.6 },
+    origin: { x: 188, y: AXIS_Y + b.depth * 0.66 },
     aFrom: 78,
     aTo: 104,
-    len: 26 + b.depth * 0.24,
+    len: 20 + b.depth * 0.2,
     count: 5,
     profile: (t) => 0.8 + 0.3 * t,
     inset: 1,

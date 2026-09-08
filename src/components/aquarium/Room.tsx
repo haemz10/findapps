@@ -49,10 +49,15 @@ export function Room() {
   const [journalOpen, setJournalOpen] = useState(false);
   const [crisisDomains, setCrisisDomains] = useState<RiskDomain[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // 물고기가 "지금 말하고 있는" 메시지. 얼굴 말풍선으로 나가고, 아래 기록에서는 빠진다.
+  const [sayingId, setSayingId] = useState<string | null>(null);
   const greetedRef = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
 
   const awake = fishAwake(time, roomLightOn);
+  const sayingMessage = sayingId ? messages.find((m) => m.id === sayingId) : undefined;
+  // 얼굴에서 말하는 중인 줄은 아래 기록에 겹쳐 보이지 않게 뺀다
+  const logMessages = sayingId ? messages.filter((m) => m.id !== sayingId) : messages;
   const mood = moodOf(care, bond.rapport);
   const amb = useMemo(() => ambienceFor(time.phase, roomLightOn), [time.phase, roomLightOn]);
 
@@ -115,7 +120,7 @@ export function Room() {
     hasFood: pendingFood > 0,
     speaking: streamingId !== null,
     userTyping: typing,
-    waiting: busy,
+    waiting: busy || sayingId !== null,
     mood,
     clarity: care.waterClarity,
     fullness: care.fullness,
@@ -141,6 +146,7 @@ export function Room() {
         s.setRoomLight(false);
       }
       if (!greeting) {
+        setSayingId(null);
         s.addMessage({ role: "user", text });
         s.setCue(quickCue(text));
 
@@ -211,6 +217,7 @@ export function Room() {
 
         fishId = s.addMessage({ role: "fish", text: "" });
         setStreamingId(fishId);
+        setSayingId(fishId);
 
         const reader = res.body.getReader();
         const dec = new TextDecoder();
@@ -321,7 +328,13 @@ export function Room() {
         }}
       />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-lg flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))]">
+      <div
+        className="relative z-10 mx-auto flex h-full w-full max-w-lg flex-col px-4"
+        style={{
+          paddingTop: "max(0.75rem, env(safe-area-inset-top))",
+          paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))",
+        }}
+      >
         <TopBar
           fishName={design.name}
           timeLabel={time.label}
@@ -337,8 +350,8 @@ export function Room() {
 
         {/* 어항 — 대화가 시작되면 조금 물러나 말풍선에 자리를 내준다 */}
         <div
-          className={`relative mt-3 shrink-0 transition-[height] duration-700 ease-out ${
-            messages.length > 1 ? "h-[32dvh] min-h-[190px]" : "h-[42dvh] min-h-[240px]"
+          className={`relative mt-3 min-h-[104px] shrink transition-[height] duration-700 ease-out ${
+            messages.length > 1 ? "h-[34dvh]" : "h-[42dvh]"
           }`}
         >
           {/* 수조에서 방으로 새어 나오는 빛 */}
@@ -360,14 +373,17 @@ export function Room() {
             userTyping={typing}
             tankLight={amb.tankLight}
             onEatFood={s.consumeFood}
+            saying={sayingMessage?.text ?? ""}
+            onDismissSaying={() => setSayingId(null)}
           />
 
           {!awake && (
             <button
               onClick={() => s.setRoomLight(false)}
-              className="absolute inset-x-0 bottom-3 mx-auto w-fit rounded-full border border-white/15
-                         bg-black/55 px-4 py-2 text-[12px] text-ink-dim backdrop-blur transition
-                         hover:border-white/30 hover:text-ink"
+              type="button"
+              className="absolute inset-x-0 bottom-3 mx-auto min-h-[44px] w-fit rounded-full border
+                         border-white/20 bg-black/65 px-5 text-[13px] text-ink-dim backdrop-blur
+                         transition hover:border-white/30 hover:text-ink active:scale-95"
             >
               불을 끄고 {design.name}를 깨우기
             </button>
@@ -387,7 +403,7 @@ export function Room() {
         <div className="mt-3 flex min-h-0 flex-1 flex-col">
           <ChatDock
             fishName={design.name}
-            messages={messages}
+            messages={logMessages}
             streamingId={streamingId}
             busy={busy}
             awake={awake}

@@ -49,7 +49,13 @@ export function Onboarding() {
     <div className="relative min-h-dvh overflow-hidden bg-abyss">
       <RoomBackdrop />
 
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-6 py-10">
+      <div
+        className="relative z-10 mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-6"
+        style={{
+          paddingTop: "max(2rem, env(safe-area-inset-top))",
+          paddingBottom: "max(2rem, env(safe-area-inset-bottom))",
+        }}
+      >
         {step === "welcome" && <Welcome onNext={() => setStep("name")} />}
 
         {step === "name" && (
@@ -172,9 +178,10 @@ function PrimaryButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full rounded-2xl bg-sky-300/90 px-6 py-4 text-[15px] font-semibold text-slate-900 transition
-                 hover:bg-sky-200 active:scale-[0.985] disabled:cursor-not-allowed disabled:bg-white/10
-                 disabled:text-ink-faint"
+      type="button"
+      className="min-h-[52px] w-full rounded-2xl bg-sky-300/90 px-6 text-[16px] font-semibold text-slate-900
+                 transition hover:bg-sky-200 active:scale-[0.985] disabled:cursor-not-allowed
+                 disabled:bg-white/10 disabled:text-ink-faint"
     >
       {children}
     </button>
@@ -185,7 +192,8 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
   return (
     <button
       onClick={onClick}
-      className="rounded-xl px-4 py-2 text-[13px] text-ink-faint transition hover:text-ink-dim"
+      type="button"
+      className="min-h-[44px] rounded-xl px-4 text-[14px] text-ink-faint transition hover:text-ink-dim"
     >
       {children}
     </button>
@@ -250,9 +258,12 @@ function NameStep({
         onChange={(e) => onChange(e.target.value.slice(0, 12))}
         onKeyDown={(e) => e.key === "Enter" && value.trim() && onNext()}
         placeholder="예: 지우"
-        className="mt-8 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-[17px]
-                   text-ink outline-none transition placeholder:text-ink-faint focus:border-sky-300/40
-                   focus:bg-white/[0.06]"
+        enterKeyHint="next"
+        autoCapitalize="off"
+        autoCorrect="off"
+        className="mt-8 min-h-[56px] w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4
+                   text-[17px] text-ink outline-none transition placeholder:text-ink-faint
+                   focus:border-sky-300/40 focus:bg-white/[0.06]"
       />
       <div className="mt-6">
         <PrimaryButton onClick={onNext} disabled={!value.trim()}>
@@ -304,7 +315,8 @@ function QuizStep({
             <button
               key={opt.label}
               onClick={() => onAnswer(q.id, opt.value)}
-              className={`w-full rounded-2xl border px-5 py-3.5 text-left text-[15px] transition
+              type="button"
+              className={`min-h-[52px] w-full rounded-2xl border px-5 py-3.5 text-left text-[15px] transition
                 ${
                   chosen === opt.value
                     ? "border-sky-300/50 bg-sky-300/12 text-ink"
@@ -352,7 +364,8 @@ function ToneStep({
           <button
             key={t.key}
             onClick={() => setTone(t.key)}
-            className={`w-full rounded-2xl border px-5 py-4 text-left transition
+            type="button"
+            className={`min-h-[64px] w-full rounded-2xl border px-5 py-4 text-left transition
               ${
                 tone === t.key
                   ? "border-sky-300/50 bg-sky-300/12"
@@ -382,7 +395,8 @@ function ToneStep({
             <button
               key={String(o.v)}
               onClick={() => setWantsAdvice(o.v)}
-              className={`flex-1 rounded-2xl border px-4 py-3.5 text-[13px] leading-snug transition
+              type="button"
+              className={`min-h-[60px] flex-1 rounded-2xl border px-4 py-3.5 text-[13.5px] leading-snug transition
                 ${
                   wantsAdvice === o.v
                     ? "border-sky-300/50 bg-sky-300/12 text-ink"
@@ -454,20 +468,22 @@ function DesignStep({
         </div>
         <button
           onClick={() => setDesign({ ...randomDesign(), name: design.name })}
-          className="absolute right-3 top-3 rounded-full border border-white/12 bg-black/40 px-3.5 py-1.5
-                     text-[12px] text-ink-dim backdrop-blur transition hover:text-ink"
+          type="button"
+          className="absolute right-3 top-3 min-h-[40px] rounded-full border border-white/12 bg-black/50
+                     px-4 text-[13px] text-ink-dim backdrop-blur transition hover:text-ink active:scale-95"
         >
           무작위
         </button>
       </div>
 
       {/* 탭 */}
-      <div className="mt-5 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="scroll-x mt-5 flex gap-1.5 pb-1">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`shrink-0 rounded-full px-4 py-2 text-[13px] transition
+            type="button"
+            className={`min-h-[42px] shrink-0 rounded-full px-4 text-[14px] transition
               ${tab === t.id ? "bg-white/12 text-ink" : "text-ink-faint hover:text-ink-dim"}`}
           >
             {t.label}
@@ -475,7 +491,7 @@ function DesignStep({
         ))}
       </div>
 
-      <div className="mt-4 flex-1 overflow-y-auto pb-4">
+      <div className="scroll-y mt-4 flex-1 pb-4">
         {tab === "color" && (
           <div className="grid grid-cols-4 gap-2.5">
             {PALETTES.map((p) => {
@@ -484,7 +500,8 @@ function DesignStep({
                 <button
                   key={p.id}
                   onClick={() => setDesign(applyPalette(design, p))}
-                  className={`rounded-2xl border p-2.5 transition ${
+                  type="button"
+                  className={`min-h-[76px] rounded-2xl border p-2.5 transition ${
                     active ? "border-sky-300/50 bg-sky-300/10" : "border-white/8 hover:border-white/20"
                   }`}
                 >
@@ -604,7 +621,8 @@ function OptionGroup<T extends string>({
             key={o.value}
             onClick={() => onChange(o.value)}
             title={o.hint}
-            className={`rounded-xl border px-3.5 py-2.5 text-left transition
+            type="button"
+            className={`min-h-[48px] rounded-xl border px-3.5 py-2.5 text-left transition
               ${
                 value === o.value
                   ? "border-sky-300/50 bg-sky-300/12 text-ink"
@@ -643,7 +661,7 @@ function Slider({
         step={0.01}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-sky-300"
+        className="w-full"
       />
     </div>
   );
@@ -675,8 +693,12 @@ function NamingStep({
         onChange={(e) => setName(e.target.value.slice(0, 12))}
         onKeyDown={(e) => e.key === "Enter" && name.trim() && onNext()}
         placeholder="예: 달이"
-        className="mt-8 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-[17px]
-                   text-ink outline-none transition placeholder:text-ink-faint focus:border-sky-300/40"
+        enterKeyHint="done"
+        autoCapitalize="off"
+        autoCorrect="off"
+        className="mt-8 min-h-[56px] w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4
+                   text-[17px] text-ink outline-none transition placeholder:text-ink-faint
+                   focus:border-sky-300/40"
       />
       <div className="mt-6 flex items-center gap-3">
         <GhostButton onClick={onBack}>← 이전</GhostButton>

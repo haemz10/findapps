@@ -13,8 +13,13 @@ export const viewport: Viewport = {
   themeColor: "#03060c",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  // 확대를 막지 않는다 — 시력이 약한 사용자에게 필요하다.
+  // iOS 의 입력창 자동 확대는 글자 크기를 16px 이상으로 두어 막는다.
+  maximumScale: 5,
+  userScalable: true,
   viewportFit: "cover",
+  // 키보드가 올라오면 레이아웃을 줄여 입력창이 가려지지 않게 한다
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

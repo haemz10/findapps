@@ -27,6 +27,8 @@ interface Props {
   hasFood: boolean;
   userTyping: boolean;
   onEatFood?: () => void;
+  /** 얼굴이 어디 있는지 알려준다 — 말풍선이 여기서 나온다 (수조 대비 0~1) */
+  onHead?: (p: { x: number; y: number; dir: 1 | -1; scale: number }) => void;
 }
 
 export function FishActor({
@@ -39,13 +41,18 @@ export function FishActor({
   hasFood,
   userTyping,
   onEatFood,
+  onHead,
 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<BehaviorState>(initialState());
   const inputRef = useRef({ activity, mood, hasFood, userTyping, speaking, clarity });
   const eatTimer = useRef(0);
   const boxRef = useRef({ w: 0, h: 0 });
+  const headRef = useRef({ x: -1, y: -1 });
+  const onHeadRef = useRef(onHead);
   const [, force] = useState(0);
+
+  onHeadRef.current = onHead;
 
   inputRef.current = { activity, mood, hasFood, userTyping, speaking, clarity };
 
@@ -73,9 +80,20 @@ export function FishActor({
 
       const el = wrapRef.current;
       if (el) {
+        const parent = el.parentElement;
+        if (parent) {
+          const r = parent.getBoundingClientRect();
+          if (r.width) boxRef.current = { w: r.width, h: r.height };
+        }
+
         // 깊이 → 크기·흐림·밝기. 뒤로 갈수록 물에 잠긴다.
         const depth = s.z;
-        const scale = (0.54 + depth * 0.7) * design.size;
+        // 수조가 작으면 물고기도 작아야 한다. 작은 화면에서 물고기가 유리를 꽉 채우면
+        // 헤엄칠 공간이 사라지고 잘려 보인다.
+        const fit = boxRef.current.w
+          ? Math.max(0.62, Math.min(1.12, boxRef.current.w / 420))
+          : 1;
+        const scale = (0.54 + depth * 0.7) * design.size * fit;
         // 흐림은 아주 뒤로 물러났을 때만. 물속이라는 느낌만 주면 되고,
         // 물고기를 들여다보는 게 이 앱의 전부이므로 대부분의 시간은 선명해야 한다.
         const blur = Math.max(0, 0.62 - depth) * 2.6;
@@ -84,11 +102,6 @@ export function FishActor({
 
         // 유리에 몸이 잘리지 않도록, 지금 크기를 기준으로 활동 범위를 좁힌다.
         // 수조 크기는 화면마다 다르므로 매 프레임 실제 크기에서 계산한다.
-        const parent = el.parentElement;
-        if (parent) {
-          const r = parent.getBoundingClientRect();
-          if (r.width) boxRef.current = { w: r.width, h: r.height };
-        }
         const { w, h } = boxRef.current;
         const marginX = w ? Math.min(0.42, (SPRITE_W * scale * 0.46) / w) : 0.2;
         const marginY = h ? Math.min(0.4, (SPRITE_H * scale * 0.46) / h) : 0.2;
@@ -103,6 +116,22 @@ export function FishActor({
         el.style.filter = `blur(${blur.toFixed(2)}px) brightness(${bright.toFixed(2)})`;
         el.style.opacity = String(opacity);
         el.style.zIndex = String(5 + Math.round(depth * 8));
+
+        // 얼굴 위치를 바깥에 알려준다. 매 프레임 부모를 리렌더하면 60fps 가 무너지므로
+        // 눈에 띄게 움직였을 때만 보고한다.
+        if (onHeadRef.current && w && h) {
+          // 스프라이트 좌표에서 주둥이는 오른쪽 끝 부근이다
+          const noseOffset = ((SPRITE_W * 0.32) * scale * s.dir) / w;
+          const hx = x + noseOffset;
+          const hy = y - (SPRITE_H * 0.12 * scale) / h;
+          if (
+            Math.abs(hx - headRef.current.x) > 0.006 ||
+            Math.abs(hy - headRef.current.y) > 0.006
+          ) {
+            headRef.current = { x: hx, y: hy };
+            onHeadRef.current({ x: hx, y: hy, dir: s.dir, scale });
+          }
+        }
       }
 
       raf = requestAnimationFrame(loop);

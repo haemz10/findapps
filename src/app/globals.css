@@ -30,16 +30,113 @@ body {
   background: var(--color-abyss);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  /* 안드로이드의 당겨서 새로고침과 iOS 의 고무줄 스크롤을 막는다 */
   overscroll-behavior: none;
+  /* iOS 가장자리 스와이프로 페이지가 밀리지 않게 */
+  position: relative;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* iOS 가 가로 모드에서 글자를 임의로 키우는 것을 막는다 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* 버튼: 300ms 지연과 더블탭 확대를 없앤다. 글자는 끌리지 않게. */
+button,
+[role="button"],
+label,
+input[type="range"] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 대화 내용은 복사할 수 있어야 한다 */
+[data-selectable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS 에서 입력창 포커스 시 화면이 확대되지 않으려면 16px 이상이어야 한다 */
+input,
+textarea,
+select {
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/* 스크롤 영역: 관성 스크롤을 켜고, 끝에서 부모로 전파되지 않게 */
+.scroll-y {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+/* 범위 슬라이더 — 기본 손잡이는 손가락으로 잡기에 너무 작다 */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.14);
+}
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.14);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -11px;
+  border-radius: 999px;
+  background: #a8d8f5;
+  border: 2px solid #0a1424;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.5);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #a8d8f5;
+  border: 2px solid #0a1424;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.5);
+}
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #bfe4ff;
+  outline-offset: 2px;
+}
+
+/* 키보드 사용자를 위한 초점 표시 */
+:focus-visible {
+  outline: 2px solid rgb(168 216 245 / 0.8);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 /* 스크롤바 — 어둠에 녹아들게 */
