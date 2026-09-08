@@ -75,10 +75,12 @@ export function FishActor({
       if (el) {
         // 깊이 → 크기·흐림·밝기. 뒤로 갈수록 물에 잠긴다.
         const depth = s.z;
-        const scale = (0.5 + depth * 0.72) * design.size;
-        const blur = (1 - depth) * 2.5;
-        const opacity = 0.42 + depth * 0.58;
-        const bright = 0.62 + depth * 0.48;
+        const scale = (0.54 + depth * 0.7) * design.size;
+        // 흐림은 아주 뒤로 물러났을 때만. 물속이라는 느낌만 주면 되고,
+        // 물고기를 들여다보는 게 이 앱의 전부이므로 대부분의 시간은 선명해야 한다.
+        const blur = Math.max(0, 0.62 - depth) * 2.6;
+        const opacity = 0.68 + depth * 0.32;
+        const bright = 0.82 + depth * 0.26;
 
         // 유리에 몸이 잘리지 않도록, 지금 크기를 기준으로 활동 범위를 좁힌다.
         // 수조 크기는 화면마다 다르므로 매 프레임 실제 크기에서 계산한다.

@@ -118,7 +118,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
 
         {/* 발광 */}
         <filter id={g("glow")} x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation={3 + design.glow * 8} result="b" />
+          <feGaussianBlur stdDeviation={1.4 + design.glow * 3.6} result="b" />
           <feMerge>
             <feMergeNode in="b" />
             <feMergeNode in="SourceGraphic" />
@@ -135,7 +135,7 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
               repeatCount="indefinite"
             />
           </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G" />
         </filter>
 
         <clipPath id={g("clip")}>
@@ -264,14 +264,14 @@ export function FishSprite({ design, activity, speaking, className }: Props) {
             </g>
 
             {/* 윤곽 — 물속의 빛이 몸을 따라 흐른다 */}
-            <path d={geo.body} fill="none" stroke="#ffffff" strokeOpacity="0.13" strokeWidth="1.2" />
+            <path d={geo.body} fill="none" stroke="#ffffff" strokeOpacity="0.2" strokeWidth="1.3" />
             <path
               d={geo.body}
               fill="none"
               stroke={design.bodyTop}
-              strokeOpacity="0.24"
-              strokeWidth="3"
-              style={{ filter: "blur(3.5px)" }}
+              strokeOpacity="0.3"
+              strokeWidth="2.4"
+              style={{ filter: "blur(2px)" }}
             />
           </g>
 

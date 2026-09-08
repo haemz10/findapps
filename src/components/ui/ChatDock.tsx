@@ -77,7 +77,7 @@ export function ChatDock({
     <div className="flex min-h-0 flex-1 flex-col">
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 space-y-3.5 overflow-y-auto px-1 pb-3"
+        className="min-h-0 flex-1 space-y-4 overflow-y-auto px-1 pb-3"
       >
         {messages.length === 0 && !busy && (
           <p className="px-2 py-6 text-center text-[13px] leading-relaxed text-ink-faint">
@@ -142,19 +142,20 @@ export function ChatDock({
 
 /* ─────────────────  말풍선  ───────────────── */
 
-/** *지느러미를 흔든다* 같은 몸짓은 따로 떼어 흐리게 보여준다 */
-function renderFishText(text: string) {
-  const parts = text.split(/(\*[^*]+\*)/g);
-  return parts.map((p, i) => {
-    if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
-      return (
-        <span key={i} className="italic text-ink-faint/80">
-          {p.slice(1, -1)}
-        </span>
-      );
-    }
-    return <span key={i}>{p}</span>;
-  });
+/**
+ * 물고기의 말에서 몸짓(*지느러미를 흔든다*)을 분리한다.
+ * 몸짓은 말이 아니라 행동이므로 말풍선 밖에, 흐리게 둔다.
+ */
+function splitGesture(text: string): { gestures: string[]; speech: string } {
+  const gestures: string[] = [];
+  const speech = text
+    .replace(/\*([^*]+)\*/g, (_, g: string) => {
+      gestures.push(g.trim());
+      return "";
+    })
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  return { gestures, speech };
 }
 
 function FishLine({
@@ -166,15 +167,41 @@ function FishLine({
   text: string;
   streaming: boolean;
 }) {
+  const { gestures, speech } = splitGesture(text);
+
   return (
     <div className="animate-fade-up">
-      <div className="mb-1 px-1 text-[11px] tracking-wide text-ink-faint">{name}</div>
-      <div className="max-w-[92%] whitespace-pre-wrap text-pretty text-[15px] leading-[1.75] text-ink">
-        {renderFishText(text)}
-        {streaming && (
-          <span className="ml-0.5 inline-block h-[15px] w-[2px] translate-y-[2px] animate-[soft-pulse_1s_ease-in-out_infinite] bg-sky-200/80" />
-        )}
-      </div>
+      <div className="mb-1.5 px-1 text-[11px] tracking-wide text-ink-faint">{name}</div>
+
+      {gestures.map((g, i) => (
+        <div key={i} className="mb-1.5 px-1 text-[12.5px] italic leading-relaxed text-ink-faint/85">
+          {g}
+        </div>
+      ))}
+
+      {(speech || streaming) && (
+        <div className="relative max-w-[88%] pb-1.5">
+          {/* 꼬리 — 아래 모서리에서 왼쪽으로 흘러나온다 */}
+          <span
+            aria-hidden="true"
+            className="absolute bottom-0 left-2 block h-3.5 w-3.5 -translate-x-1/2 rotate-45
+                       rounded-[2px] border-b border-l border-white/10 bg-[#0c1524]"
+          />
+          <div
+            className="relative whitespace-pre-wrap text-pretty rounded-2xl rounded-bl-sm border
+                       border-white/10 bg-[#0c1524] px-4 py-3 text-[15px] leading-[1.75]
+                       text-ink shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+          >
+            {speech}
+            {streaming && (
+              <span
+                className="ml-0.5 inline-block h-[15px] w-[2px] translate-y-[2px]
+                           animate-[soft-pulse_1s_ease-in-out_infinite] bg-sky-200/80"
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -182,11 +209,19 @@ function FishLine({
 function UserLine({ text }: { text: string }) {
   return (
     <div className="flex animate-fade-up justify-end">
-      <div
-        className="max-w-[82%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-white/[0.07] px-3.5 py-2.5
-                   text-[14px] leading-relaxed text-ink-dim"
-      >
-        {text}
+      <div className="relative max-w-[82%] pb-1.5">
+        {/* 꼬리 */}
+        <span
+          aria-hidden="true"
+          className="absolute bottom-0 right-2 block h-3.5 w-3.5 translate-x-1/2 rotate-45
+                     rounded-[2px] border-b border-r border-sky-200/18 bg-[#16283c]"
+        />
+        <div
+          className="relative whitespace-pre-wrap rounded-2xl rounded-br-sm border border-sky-200/18
+                     bg-[#16283c] px-4 py-2.5 text-[14.5px] leading-relaxed text-ink/90"
+        >
+          {text}
+        </div>
       </div>
     </div>
   );
@@ -195,15 +230,22 @@ function UserLine({ text }: { text: string }) {
 function Typing({ name }: { name: string }) {
   return (
     <div className="animate-fade-up">
-      <div className="mb-1 px-1 text-[11px] tracking-wide text-ink-faint">{name}</div>
-      <div className="flex gap-1 px-1 py-1.5">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="block h-1.5 w-1.5 rounded-full bg-sky-200"
-            style={{ animation: `typing-dot 1.3s ease-in-out ${i * 0.18}s infinite` }}
-          />
-        ))}
+      <div className="mb-1.5 px-1 text-[11px] tracking-wide text-ink-faint">{name}</div>
+      <div className="relative w-fit pb-1.5">
+        <span
+          aria-hidden="true"
+          className="absolute bottom-0 left-2 block h-3.5 w-3.5 -translate-x-1/2 rotate-45
+                     rounded-[2px] border-b border-l border-white/10 bg-[#0c1524]"
+        />
+        <div className="relative flex gap-1.5 rounded-2xl rounded-bl-sm border border-white/10 bg-[#0c1524] px-4 py-3.5">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="block h-1.5 w-1.5 rounded-full bg-sky-200"
+              style={{ animation: `typing-dot 1.3s ease-in-out ${i * 0.18}s infinite` }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

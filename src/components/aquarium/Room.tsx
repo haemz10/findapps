@@ -335,8 +335,12 @@ export function Room() {
           onOpenJournal={() => setJournalOpen(true)}
         />
 
-        {/* 어항 */}
-        <div className="relative mt-3 h-[42dvh] min-h-[240px] shrink-0">
+        {/* 어항 — 대화가 시작되면 조금 물러나 말풍선에 자리를 내준다 */}
+        <div
+          className={`relative mt-3 shrink-0 transition-[height] duration-700 ease-out ${
+            messages.length > 1 ? "h-[32dvh] min-h-[190px]" : "h-[42dvh] min-h-[240px]"
+          }`}
+        >
           {/* 수조에서 방으로 새어 나오는 빛 */}
           <div
             className="pointer-events-none absolute -inset-x-10 -bottom-14 -top-8 -z-10 transition-opacity duration-[1600ms]"

@@ -67,9 +67,9 @@ function pickTarget(a: FishActivity, mood: number): { x: number; y: number; z: n
   switch (a) {
     case "sleeping":
       // 바닥 근처 구석에서 거의 움직이지 않는다
-      return { x: 0.26 + r * 0.16, y: 0.7 + Math.random() * 0.08, z: 0.12 };
+      return { x: 0.26 + r * 0.16, y: 0.7 + Math.random() * 0.08, z: 0.3 };
     case "waking":
-      return { x: 0.35 + r * 0.3, y: 0.5 + Math.random() * 0.15, z: 0.3 };
+      return { x: 0.35 + r * 0.3, y: 0.5 + Math.random() * 0.15, z: 0.5 };
     case "approaching":
     case "listening":
     case "speaking":
@@ -78,18 +78,18 @@ function pickTarget(a: FishActivity, mood: number): { x: number; y: number; z: n
     case "eating":
       return { x: 0.46 + (r - 0.5) * 0.26, y: 0.28 + Math.random() * 0.18, z: 0.78 };
     case "playing":
-      return { x: 0.3 + r * 0.4, y: 0.28 + Math.random() * 0.32, z: 0.55 + Math.random() * 0.35 };
+      return { x: 0.3 + r * 0.4, y: 0.28 + Math.random() * 0.32, z: 0.62 + Math.random() * 0.3 };
     case "retreating":
-      return { x: 0.28 + r * 0.44, y: 0.38 + Math.random() * 0.28, z: 0.1 };
+      return { x: 0.28 + r * 0.44, y: 0.38 + Math.random() * 0.28, z: 0.24 };
     case "sulking":
-      return { x: r < 0.5 ? 0.24 : 0.76, y: 0.6 + Math.random() * 0.16, z: 0.18 };
+      return { x: r < 0.5 ? 0.24 : 0.76, y: 0.6 + Math.random() * 0.16, z: 0.3 };
     default: {
       // 유유히 배회 — 기분이 좋으면 조금 더 앞쪽, 넓게 돈다
-      const front = 0.2 + (mood / 100) * 0.45;
+      const front = 0.42 + (mood / 100) * 0.36;
       return {
         x: 0.2 + r * 0.6,
         y: 0.26 + Math.random() * 0.44,
-        z: front + Math.random() * 0.25,
+        z: Math.min(0.95, front + Math.random() * 0.2),
       };
     }
   }
