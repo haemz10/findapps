@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FishPortrait } from "@/components/aquarium/FishPortrait";
+import { BowlPortrait } from "@/components/aquarium/BowlPortrait";
 import { QUIZ, TONE_CHOICES, scoreQuiz } from "@/lib/psych/quiz";
 import { useApp } from "@/lib/store";
 import type { UserProfile } from "@/lib/types";
@@ -183,8 +183,8 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
 function Welcome({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-1 flex-col justify-center animate-fade-up">
-      <div className="mx-auto mb-10 h-40 w-64 opacity-90">
-        <FishPortrait className="h-full w-full" />
+      <div className="mx-auto mb-8 h-52 w-52 opacity-95">
+        <BowlPortrait className="h-full w-full" />
       </div>
       <Title>
         불을 끄면,
@@ -409,8 +409,8 @@ function NamingStep({
 }) {
   return (
     <div className="flex flex-1 flex-col justify-center animate-fade-up">
-      <div className="mx-auto mb-8 h-40 w-64">
-        <FishPortrait className="h-full w-full" />
+      <div className="mx-auto mb-7 h-48 w-48">
+        <BowlPortrait className="h-full w-full" />
       </div>
       <Title>이름을 지어주세요</Title>
       <Sub>이름을 부르는 순간부터, 이 아이는 당신의 물고기가 됩니다.</Sub>
@@ -442,8 +442,8 @@ function NamingStep({
 function ReadyStep({ name, onNext }: { name: string; onNext: () => void }) {
   return (
     <div className="flex flex-1 flex-col justify-center animate-fade-up">
-      <div className="mx-auto mb-8 h-44 w-72">
-        <FishPortrait className="h-full w-full" />
+      <div className="mx-auto mb-7 h-52 w-52">
+        <BowlPortrait className="h-full w-full" />
       </div>
       <Title>{name}가 물속에서 당신을 봅니다.</Title>
       <Sub>

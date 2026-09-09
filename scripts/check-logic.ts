@@ -14,6 +14,7 @@ import { scoreQuiz, QUIZ } from "../src/lib/psych/quiz";
 import { buildStablePrefix, buildTurnContext } from "../src/lib/psych/prompt";
 import { initialCare, moodOf } from "../src/lib/care";
 import { phaseOf, fishAwake, ambienceFor } from "../src/lib/daynight";
+import { dissolveLevel, IDLE_BEFORE_FADE_MS, FADE_SPAN_MS } from "../src/lib/fish/behavior";
 import type { ChatMessage } from "../src/lib/types";
 
 let failed = 0;
@@ -205,6 +206,37 @@ check("낮에 불이 켜져 있으면 잔다", !fishAwake(noon, true));
 check("낮이라도 불을 끄면 깨어난다", fishAwake(noon, false));
 check("불을 끄면 수조 조명이 강해진다", ambienceFor(noon.phase, false).tankLight > ambienceFor(noon.phase, true).tankLight);
 
+console.log("\n── 나타났다 사라짐 ──");
+const far = IDLE_BEFORE_FADE_MS + FADE_SPAN_MS + 10_000;
+check(
+  "밝은 방에서는 사라지지 않는다",
+  dissolveLevel({ activity: "drifting", roomDark: false, idleMs: far, serious: false }) === 0
+);
+check(
+  "어둠 속에서 가만히 두면 사라진다",
+  dissolveLevel({ activity: "drifting", roomDark: true, idleMs: far, serious: false }) > 0.85
+);
+check(
+  "자국은 남는다 (완전히 0이 되지 않는다)",
+  dissolveLevel({ activity: "drifting", roomDark: true, idleMs: far, serious: false }) < 1
+);
+check(
+  "말하는 중에는 또렷하다",
+  dissolveLevel({ activity: "speaking", roomDark: true, idleMs: far, serious: false }) === 0
+);
+check(
+  "사용자를 기다리는 중에는 또렷하다",
+  dissolveLevel({ activity: "listening", roomDark: true, idleMs: far, serious: false }) === 0
+);
+check(
+  "무거운 이야기 중에는 절대 사라지지 않는다",
+  dissolveLevel({ activity: "drifting", roomDark: true, idleMs: far, serious: true }) === 0
+);
+check(
+  "막 대화를 마친 직후에는 또렷하다",
+  dissolveLevel({ activity: "drifting", roomDark: true, idleMs: 1_000, serious: false }) === 0
+);
+
 console.log("\n── 프롬프트 조립 ──");
 const prefix = buildStablePrefix({ name: "달이" }, "지우");
 check("고정 프리픽스에 이름이 들어간다", prefix.includes("달이") && prefix.includes("지우"));
@@ -238,6 +270,14 @@ check("연속 방문을 알고 있다", ctx.includes("3일 연속"));
 check("기억이 들어간다", ctx.includes("고양이"));
 check("위기 지시가 최우선으로 붙는다", ctx.includes("안전 — 최우선") && ctx.includes("109"));
 check("기법 이름을 말하지 말라는 지시", ctx.includes("기법의 이름은 절대 말하지 마라"));
+
+console.log("\n── 물고기의 결 ──");
+check("수수께끼를 쓸 때와 쓰면 안 될 때가 모두 있다", prefix.includes("수수께끼를 써도 될 때") && prefix.includes("수수께끼를 절대 쓰면 안 될 때"));
+check("힘들 때는 수수께끼 금지", prefix.includes("괴로운 사람에게 수수께끼는 조롱이 된다"));
+check("못 알아들으면 바로 풀어준다", prefix.includes("두 번은 없다"));
+check("임상적 깊이가 지시되어 있다", prefix.includes("감정 뒤의 감정") && prefix.includes("되풀이되는 무늬"));
+check("학위·경력을 주장하지 않는다", prefix.includes("학위·경력·자격증·소속을 말하지 마라"));
+check("무엇이냐 물으면 AI라고 답한다", prefix.includes("물고기이고, AI다"));
 
 console.log(`\n${failed === 0 ? "모두 통과" : `${failed}건 실패`}\n`);
 process.exit(failed === 0 ? 0 : 1);

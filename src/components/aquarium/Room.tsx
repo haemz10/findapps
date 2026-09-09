@@ -1,14 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Tank } from "./Tank";
+import { Bowl } from "./Bowl";
 import { TopBar } from "@/components/ui/TopBar";
 import { CareBar } from "@/components/ui/CareBar";
 import { ChatDock } from "@/components/ui/ChatDock";
 import { JournalSheet } from "@/components/ui/JournalSheet";
 import { useApp } from "@/lib/store";
 import { ambienceFor, defaultRoomLight, fishAwake, phaseOf } from "@/lib/daynight";
-import { decideActivity } from "@/lib/fish/behavior";
+import {
+  CHESHIRE_BEAT_MS,
+  SAYING_LINGER_MS,
+  decideActivity,
+  dissolveLevel,
+} from "@/lib/fish/behavior";
 import { moodOf } from "@/lib/care";
 import { assessRisk } from "@/lib/psych/safety";
 import type { FishCue, RiskDomain } from "@/lib/types";
@@ -38,6 +43,7 @@ export function Room() {
     pendingFood,
     busy,
     showCrisis,
+    lastRisk,
     soundOn,
     usedTechniques,
   } = s;
@@ -51,6 +57,9 @@ export function Room() {
   const [error, setError] = useState<string | null>(null);
   // 물고기가 "지금 말하고 있는" 메시지. 얼굴 말풍선으로 나가고, 아래 기록에서는 빠진다.
   const [sayingId, setSayingId] = useState<string | null>(null);
+  // 마지막으로 사용자가 움직인 시각 — 가만히 두면 물고기가 물에 잠긴다
+  const [lastTouch, setLastTouch] = useState(() => Date.now());
+  const [idleMs, setIdleMs] = useState(0);
   const greetedRef = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -114,6 +123,26 @@ export function Room() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [awake]);
 
+  /* ── 가만히 있는 시간을 센다 ── */
+  useEffect(() => {
+    const id = window.setInterval(() => setIdleMs(Date.now() - lastTouch), 2000);
+    return () => window.clearInterval(id);
+  }, [lastTouch]);
+
+  useEffect(() => {
+    if (typing || busy || streamingId) {
+      setLastTouch(Date.now());
+      setIdleMs(0);
+    }
+  }, [typing, busy, streamingId]);
+
+  /* ── 말도 물에 풀린다 ── 한참 두면 말풍선이 걷히고 아래 기록으로 내려간다 */
+  useEffect(() => {
+    if (!sayingId || streamingId || busy) return;
+    const id = window.setTimeout(() => setSayingId(null), SAYING_LINGER_MS);
+    return () => window.clearTimeout(id);
+  }, [sayingId, streamingId, busy]);
+
   /* ── 활동 결정 ── */
   const activity = decideActivity({
     awake,
@@ -121,9 +150,16 @@ export function Room() {
     speaking: streamingId !== null,
     userTyping: typing,
     waiting: busy || sayingId !== null,
-    mood,
     clarity: care.waterClarity,
     fullness: care.fullness,
+  });
+
+  // 무거운 이야기 중이면 절대 사라지지 않는다 — 그때 필요한 건 곁에 있는 것이다
+  const dissolve = dissolveLevel({
+    activity,
+    roomDark: !roomLightOn,
+    idleMs,
+    serious: lastRisk !== "none" || showCrisis,
   });
 
   useEffect(() => {
@@ -156,6 +192,12 @@ export function Room() {
           setCrisisDomains(local.domains);
           if (local.level === "high") s.setShowCrisis(true);
         }
+      }
+
+      // 체셔다운 뜸. 사람이라면 못 견딜 반 박자가, 물고기에게는 신비로움이 된다.
+      // 위기 상황에서는 뜸을 들이지 않는다 — 그때의 침묵은 신비가 아니라 방치다.
+      if (!greeting && assessRisk(text).level === "none") {
+        await new Promise((r) => setTimeout(r, CHESHIRE_BEAT_MS));
       }
 
       s.setBusy(true);
@@ -351,7 +393,7 @@ export function Room() {
         {/* 어항 — 대화가 시작되면 조금 물러나 말풍선에 자리를 내준다 */}
         <div
           className={`relative mt-3 min-h-[104px] shrink transition-[height] duration-700 ease-out ${
-            messages.length > 1 ? "h-[34dvh]" : "h-[42dvh]"
+            messages.length > 1 ? "h-[40dvh]" : "h-[50dvh]"
           }`}
         >
           {/* 수조에서 방으로 새어 나오는 빛 */}
@@ -362,18 +404,17 @@ export function Room() {
               filter: "blur(22px)",
             }}
           />
-          <Tank
+          <Bowl
             activity={activity}
             cue={cue}
-            mood={mood}
             clarity={care.waterClarity}
-            speaking={streamingId !== null}
-            pendingFood={pendingFood}
-            userTyping={typing}
             tankLight={amb.tankLight}
-            onEatFood={s.consumeFood}
+            pendingFood={pendingFood}
+            speaking={streamingId !== null}
             saying={sayingMessage?.text ?? ""}
             onDismissSaying={() => setSayingId(null)}
+            onEatFood={s.consumeFood}
+            dissolve={dissolve}
           />
 
           {!awake && (

@@ -53,7 +53,7 @@ export function SpeechBubble({ head, text, streaming, gestures, onDismiss }: Pro
     const h = size.h || 60;
 
     const pad = 10;
-    const gapY = 16;
+    const gapY = 12;
     const hx = head.x * pr.width;
     const hy = head.y * pr.height;
 
@@ -64,7 +64,7 @@ export function SpeechBubble({ head, text, streaming, gestures, onDismiss }: Pro
 
     if (top < pad) {
       // ② 위가 좁으면 옆으로 — 몸통을 덮는 것보다 낫다
-      const sideLeft = head.dir === 1 ? hx - w - 26 : hx + 26;
+      const sideLeft = head.dir === 1 ? hx - w - 12 : hx + 12;
       if (sideLeft >= pad && sideLeft + w <= pr.width - pad) {
         left = sideLeft;
         top = Math.min(pr.height - h - pad, Math.max(pad, hy - h / 2));
@@ -96,7 +96,7 @@ export function SpeechBubble({ head, text, streaming, gestures, onDismiss }: Pro
   return (
     <div
       ref={ref}
-      className="absolute z-30 w-[min(60%,16rem)] animate-fade-up"
+      className="absolute z-30 w-[min(72%,14.5rem)] animate-fade-up"
       style={{ left: -9999, top: -9999 }}
     >
       <div className="relative">
@@ -110,7 +110,7 @@ export function SpeechBubble({ head, text, streaming, gestures, onDismiss }: Pro
         />
         <div
           data-selectable
-          className="scroll-y relative max-h-[7.5rem] rounded-2xl border border-white/25
+          className="scroll-y relative max-h-[6.2rem] rounded-2xl border border-white/25
                      bg-[#0d1a2c]/95 py-2.5 pl-3.5 pr-7 text-[13.5px] leading-[1.6] text-ink
                      shadow-[0_6px_28px_rgba(0,0,0,0.6)]"
         >
