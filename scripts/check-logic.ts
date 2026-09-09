@@ -12,10 +12,8 @@ import { selectTechniques } from "../src/lib/psych/frameworks";
 import { detectStuck } from "../src/lib/psych/stuck";
 import { scoreQuiz, QUIZ } from "../src/lib/psych/quiz";
 import { buildStablePrefix, buildTurnContext } from "../src/lib/psych/prompt";
-import { DEFAULT_DESIGN } from "../src/lib/fish/design";
 import { initialCare, moodOf } from "../src/lib/care";
 import { phaseOf, fishAwake, ambienceFor } from "../src/lib/daynight";
-import { tailFin, dorsalFin, bodyPath } from "../src/lib/fish/geometry";
 import type { ChatMessage } from "../src/lib/types";
 
 let failed = 0;
@@ -207,21 +205,13 @@ check("낮에 불이 켜져 있으면 잔다", !fishAwake(noon, true));
 check("낮이라도 불을 끄면 깨어난다", fishAwake(noon, false));
 check("불을 끄면 수조 조명이 강해진다", ambienceFor(noon.phase, false).tankLight > ambienceFor(noon.phase, true).tankLight);
 
-console.log("\n── 형태 생성 ──");
-const tail = tailFin("halfmoon", "teardrop");
-check("꼬리 살이 생성된다", tail.rays.length > 10, tail.rays.length);
-check("꼬리 막 경로가 유효하다", tail.membrane.startsWith("M") && !tail.membrane.includes("NaN"));
-const dorsal = dorsalFin("veil", "broad");
-check("등지느러미에 NaN이 없다", !dorsal.membrane.includes("NaN"));
-check("몸통 경로가 닫혀 있다", bodyPath("round").trim().endsWith("Z"));
-
 console.log("\n── 프롬프트 조립 ──");
-const prefix = buildStablePrefix({ ...DEFAULT_DESIGN, name: "달이" }, "지우");
+const prefix = buildStablePrefix({ name: "달이" }, "지우");
 check("고정 프리픽스에 이름이 들어간다", prefix.includes("달이") && prefix.includes("지우"));
 check("프리픽스에 시각 같은 가변값이 없다", !/\d{2}:\d{2}/.test(prefix));
 
 const ctx = buildTurnContext({
-  design: { ...DEFAULT_DESIGN, name: "달이" },
+  fish: { name: "달이" },
   profile: {
     nickname: "지우",
     createdAt: 0,

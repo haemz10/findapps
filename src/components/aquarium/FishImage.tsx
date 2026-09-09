@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FISH_ASSET } from "@/lib/fish/asset";
-import type { FishActivity } from "@/lib/types";
+import type { FishActivity, FishCue } from "@/lib/types";
 
 /**
  * 그림 한 장으로 그리는 물고기.
@@ -15,26 +15,39 @@ import type { FishActivity } from "@/lib/types";
 
 interface Props {
   activity: FishActivity;
+  /** 대화가 만든 기분 — 움직임의 결을 바꾼다 */
+  cue: FishCue;
   speaking?: boolean;
-  /** 그림을 못 불러왔을 때 대신 보여줄 것 */
-  fallback: React.ReactNode;
   className?: string;
 }
 
-export function FishImage({ activity, speaking, fallback, className }: Props) {
+/** 기분에 따른 움직임 배율 — 그림은 표정을 바꿀 수 없으니 몸짓으로 말한다 */
+const TEMPO: Record<FishCue, { amp: number; speed: number }> = {
+  playful: { amp: 1.8, speed: 1.7 },
+  curious: { amp: 1.25, speed: 1.25 },
+  warm: { amp: 1.1, speed: 1.05 },
+  calm: { amp: 1, speed: 1 },
+  steady: { amp: 0.8, speed: 0.85 },
+  concerned: { amp: 0.65, speed: 0.7 },
+  sleepy: { amp: 0.5, speed: 0.55 },
+};
+
+export function FishImage({ activity, cue, speaking, className }: Props) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) return <>{fallback}</>;
+  // 그림이 아직 없을 때. 앱이 깨지는 것보다는 빈 어항이 낫다.
+  if (failed) return <MissingAsset className={className} />;
 
   const sleeping = activity === "sleeping";
   const lively = activity === "playing";
 
-  // 활동에 따라 흔들림의 폭과 속도가 달라진다
-  const sway = sleeping ? 1.2 : lively ? 5 : 2.6;
-  const swayDur = sleeping ? 11 : lively ? 2.6 : 6.2;
-  const bob = sleeping ? 1.5 : lively ? 7 : 3.4;
-  const bobDur = sleeping ? 9 : lively ? 2.1 : 5.1;
-  const breathDur = sleeping ? 7.5 : 3.8;
+  // 활동과 기분이 함께 흔들림의 폭과 속도를 정한다
+  const t = sleeping ? TEMPO.sleepy : TEMPO[cue];
+  const sway = (sleeping ? 1.2 : lively ? 5 : 2.6) * t.amp;
+  const swayDur = (sleeping ? 11 : lively ? 2.6 : 6.2) / t.speed;
+  const bob = (sleeping ? 1.5 : lively ? 7 : 3.4) * t.amp;
+  const bobDur = (sleeping ? 9 : lively ? 2.1 : 5.1) / t.speed;
+  const breathDur = (sleeping ? 7.5 : 3.8) / t.speed;
 
   return (
     <div
@@ -100,6 +113,24 @@ export function FishImage({ activity, speaking, fallback, className }: Props) {
           </span>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * public/fish/betta.png 가 없을 때.
+ * 물고기를 흉내 내지 않는다 — 없으면 없다고 말하는 편이 정직하다.
+ */
+function MissingAsset({ className }: { className?: string }) {
+  return (
+    <div className={`${className ?? ""} grid place-items-center`}>
+      <div className="rounded-2xl border border-dashed border-white/20 bg-black/40 px-4 py-3 text-center backdrop-blur-sm">
+        <p className="text-[12px] leading-relaxed text-ink-dim">
+          물고기 그림이 아직 없어요
+          <br />
+          <span className="text-ink-faint">public/fish/betta.png</span>
+        </p>
+      </div>
     </div>
   );
 }

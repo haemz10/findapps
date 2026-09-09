@@ -25,7 +25,7 @@ function quickCue(text: string): FishCue {
 export function Room() {
   const s = useApp();
   const {
-    design,
+    fish,
     profile,
     care,
     bond,
@@ -187,7 +187,7 @@ export function Room() {
           headers: { "Content-Type": "application/json" },
           signal: ctrl.signal,
           body: JSON.stringify({
-            design,
+            fish,
             profile,
             care,
             bond,
@@ -248,7 +248,7 @@ export function Room() {
       if (!greeting) void reflect();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [busy, design, profile, care, bond, notes, digests, awake, time.label, usedTechniques]
+    [busy, fish, profile, care, bond, notes, digests, awake, time.label, usedTechniques]
   );
 
   const reflect = useCallback(async () => {
@@ -336,7 +336,7 @@ export function Room() {
         }}
       >
         <TopBar
-          fishName={design.name}
+          fishName={fish.name}
           timeLabel={time.label}
           clock={`${String(new Date().getHours()).padStart(2, "0")}:${String(new Date().getMinutes()).padStart(2, "0")}`}
           awake={awake}
@@ -363,7 +363,6 @@ export function Room() {
             }}
           />
           <Tank
-            design={design}
             activity={activity}
             cue={cue}
             mood={mood}
@@ -385,7 +384,7 @@ export function Room() {
                          border-white/20 bg-black/65 px-5 text-[13px] text-ink-dim backdrop-blur
                          transition hover:border-white/30 hover:text-ink active:scale-95"
             >
-              불을 끄고 {design.name}를 깨우기
+              불을 끄고 {fish.name}를 깨우기
             </button>
           )}
         </div>
@@ -402,7 +401,7 @@ export function Room() {
 
         <div className="mt-3 flex min-h-0 flex-1 flex-col">
           <ChatDock
-            fishName={design.name}
+            fishName={fish.name}
             messages={logMessages}
             streamingId={streamingId}
             busy={busy}

@@ -8,15 +8,16 @@ import type {
   ChatMessage,
   FishActivity,
   FishCue,
-  FishDesign,
+  Fish,
   MemoryNote,
   RiskLevel,
   SessionDigest,
   UserProfile,
 } from "@/lib/types";
-import { DEFAULT_DESIGN } from "@/lib/fish/design";
 import { changeWater, feed, initialCare, tickCare } from "@/lib/care";
 import { scoreQuiz } from "@/lib/psych/quiz";
+
+const NEW_FISH: Fish = { name: "" };
 
 const emptyProfile: UserProfile = {
   nickname: "",
@@ -52,7 +53,7 @@ export interface AppState {
   /* ── 온보딩 ── */
   onboarded: boolean;
   profile: UserProfile;
-  design: FishDesign;
+  fish: Fish;
 
   /* ── 지속 상태 ── */
   care: CareState;
@@ -78,7 +79,7 @@ export interface AppState {
     nickname: string;
     answers: Record<string, number>;
     overrides: UserProfile["overrides"];
-    design: FishDesign;
+    fishName: string;
   }) => void;
   resetAll: () => void;
 
@@ -118,7 +119,7 @@ export const useApp = create<AppState>()(
     (set, get) => ({
       onboarded: false,
       profile: emptyProfile,
-      design: DEFAULT_DESIGN,
+      fish: NEW_FISH,
       care: initialCare(),
       bond: emptyBond,
       notes: [],
@@ -136,7 +137,7 @@ export const useApp = create<AppState>()(
       soundOn: false,
       usedTechniques: [],
 
-      completeOnboarding: ({ nickname, answers, overrides, design }) =>
+      completeOnboarding: ({ nickname, answers, overrides, fishName }) =>
         set({
           onboarded: true,
           profile: {
@@ -146,7 +147,7 @@ export const useApp = create<AppState>()(
             answers,
             overrides,
           },
-          design,
+          fish: { name: fishName },
           care: initialCare(),
           bond: { ...emptyBond, rapport: 4 },
         }),
@@ -155,7 +156,7 @@ export const useApp = create<AppState>()(
         set({
           onboarded: false,
           profile: emptyProfile,
-          design: DEFAULT_DESIGN,
+          fish: NEW_FISH,
           care: initialCare(),
           bond: emptyBond,
           notes: [],
@@ -272,7 +273,7 @@ export const useApp = create<AppState>()(
       partialize: (s) => ({
         onboarded: s.onboarded,
         profile: s.profile,
-        design: s.design,
+        fish: s.fish,
         care: s.care,
         bond: s.bond,
         notes: s.notes,

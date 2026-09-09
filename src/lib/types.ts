@@ -5,43 +5,14 @@
  * 서버로 가는 것은 응답을 만드는 데 필요한 대화 맥락뿐이다.
  */
 
-/* ─────────────────────────  물고기 외형  ───────────────────────── */
+/* ─────────────────────────  물고기  ───────────────────────── */
 
-export type BodyShape = "slender" | "round" | "teardrop" | "broad";
-export type EyeShape = "round" | "almond" | "droopy" | "sparkle" | "sleepy";
-export type MouthShape = "small" | "pout" | "smile" | "wide";
-export type ScalePattern =
-  | "plain"
-  | "pearl"
-  | "marble"
-  | "net"
-  | "speckle"
-  | "iridescent";
-export type FinStyle = "veil" | "crown" | "halfmoon" | "delta" | "feather";
-
-export interface FishDesign {
+/**
+ * 물고기는 그림 한 장으로 고정되어 있다 (public/fish, src/lib/fish/asset.ts).
+ * 사용자가 정하는 것은 이름뿐이다.
+ */
+export interface Fish {
   name: string;
-  bodyShape: BodyShape;
-  eyeShape: EyeShape;
-  eyeColor: string;
-  mouthShape: MouthShape;
-  scalePattern: ScalePattern;
-  finStyle: FinStyle;
-  /** 몸통 그라디언트 (머리 → 꼬리) */
-  bodyTop: string;
-  bodyMid: string;
-  bodyBottom: string;
-  /** 지느러미 그라디언트 — 뿌리 → 중간 → 끝. 베타처럼 색이 번지게 하려면 셋이 필요하다. */
-  finInner: string;
-  /** 예전 저장 데이터에는 없을 수 있다 */
-  finMid?: string;
-  finOuter: string;
-  /** 0.8 ~ 1.35 */
-  size: number;
-  /** 지느러미가 흔들리는 폭 0.6 ~ 1.4 */
-  finFlow: number;
-  /** 발광 정도 0 ~ 1 */
-  glow: number;
 }
 
 /* ─────────────────────────  성향 프로필  ───────────────────────── */

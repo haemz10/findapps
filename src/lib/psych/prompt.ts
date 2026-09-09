@@ -1,7 +1,7 @@
 import type {
   Bond,
   CareState,
-  FishDesign,
+  Fish,
   MemoryNote,
   RiskAssessment,
   SessionDigest,
@@ -9,7 +9,6 @@ import type {
   UserProfile,
 } from "@/lib/types";
 import { rapportStage } from "@/lib/types";
-import { personaFromDesign } from "@/lib/fish/design";
 import { safetyDirective } from "./safety";
 import type { TechniqueCard } from "./frameworks";
 
@@ -234,7 +233,7 @@ ${body}`;
 /* ══════════════════  ③ 조립  ══════════════════ */
 
 export interface PromptContext {
-  design: FishDesign;
+  fish: Fish;
   profile: UserProfile;
   care: CareState;
   bond: Bond;
@@ -250,18 +249,23 @@ export interface PromptContext {
   turn: number;
 }
 
+/** 물고기의 생김새는 고정이다 — 그림 한 장으로 정해져 있다 */
+const APPEARANCE = `몸은 은은한 푸른빛이고 주황빛 작은 반점이 흩어져 있다.
+눈이 크고 맑은 파란색이라 무엇이든 오래 들여다본다. 입은 작고 분홍빛이다.
+몸집보다 큰 지느러미는 뿌리의 푸른색이 보라를 거쳐 산호빛으로 번지며,
+말할 때마다 물결처럼 아주 천천히 흔들린다.`;
+
 /** 앞부분 — 캐시 대상. 바이트가 자주 바뀌면 안 된다. */
-export function buildStablePrefix(design: FishDesign, profileNickname: string): string {
+export function buildStablePrefix(fish: Fish, profileNickname: string): string {
   return `${CHARTER}
 
 ■ 너는 누구인가
 
-이름: ${design.name || "이름 없는 물고기"}
-생김새: ${personaFromDesign(design)}
+이름: ${fish.name || "이름 없는 물고기"}
+생김새: ${APPEARANCE}
 너를 키우는 사람: ${profileNickname || "이름을 아직 말해주지 않은 사람"}
 
-생김새는 말투에 실제로 배어 나와야 한다. 졸린 눈이면 말이 느리고, 웃는 입이면 말끝이 부드럽고,
-긴 지느러미면 몸짓 묘사가 길게 흐른다.`;
+생김새는 말투에 배어 나와야 한다. 몸짓을 묘사할 때는 이 지느러미와 눈을 쓴다.`;
 }
 
 /** 뒷부분 — 매 턴 바뀐다. */

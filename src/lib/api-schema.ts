@@ -5,23 +5,8 @@ import { z } from "zod";
  * 브라우저에서 오는 값은 전부 신뢰하지 않고 여기서 한 번 거른다.
  */
 
-export const FishDesignSchema = z.object({
+export const FishSchema = z.object({
   name: z.string().max(24),
-  bodyShape: z.enum(["slender", "round", "teardrop", "broad"]),
-  eyeShape: z.enum(["round", "almond", "droopy", "sparkle", "sleepy"]),
-  eyeColor: z.string().max(24),
-  mouthShape: z.enum(["small", "pout", "smile", "wide"]),
-  scalePattern: z.enum(["plain", "pearl", "marble", "net", "speckle", "iridescent"]),
-  finStyle: z.enum(["veil", "crown", "halfmoon", "delta", "feather"]),
-  bodyTop: z.string().max(24),
-  bodyMid: z.string().max(24),
-  bodyBottom: z.string().max(24),
-  finInner: z.string().max(24),
-  finMid: z.string().max(24).optional(),
-  finOuter: z.string().max(24),
-  size: z.number().min(0.5).max(2),
-  finFlow: z.number().min(0.3).max(2),
-  glow: z.number().min(0).max(1),
 });
 
 const Score = z.number().min(0).max(100);
@@ -89,7 +74,7 @@ export const TurnSchema = z.object({
 });
 
 export const ChatRequestSchema = z.object({
-  design: FishDesignSchema,
+  fish: FishSchema,
   profile: ProfileSchema,
   care: CareSchema,
   bond: BondSchema,

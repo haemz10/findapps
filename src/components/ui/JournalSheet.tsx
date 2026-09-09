@@ -10,7 +10,7 @@ import { KR_RESOURCES } from "@/lib/psych/safety";
  * "내 데이터가 어디 있는지" 사용자가 언제든 볼 수 있어야 한다.
  */
 export function JournalSheet({ onClose }: { onClose: () => void }) {
-  const { design, profile, bond, notes, digests, resetAll } = useApp();
+  const { fish, profile, bond, notes, digests, resetAll } = useApp();
   const [tab, setTab] = useState<"memory" | "me" | "settings">("memory");
   const [confirmReset, setConfirmReset] = useState(false);
   const stage = rapportStage(bond.rapport);
@@ -65,7 +65,7 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
           {tab === "memory" && (
             <div className="space-y-6">
               <div>
-                <Label>{design.name}와의 관계</Label>
+                <Label>{fish.name}와의 관계</Label>
                 <div className="mt-2 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
                   <div className="flex items-baseline gap-2">
                     <span className="text-[15px] font-medium text-ink">{stage.label}</span>
@@ -87,7 +87,7 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
               </div>
 
               <div>
-                <Label>{design.name}가 기억하는 것</Label>
+                <Label>{fish.name}가 기억하는 것</Label>
                 {notes.length === 0 ? (
                   <Empty>아직 기억하는 게 없어요. 이야기를 나눌수록 하나씩 늘어납니다.</Empty>
                 ) : (
@@ -131,7 +131,7 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
           {tab === "me" && (
             <div className="space-y-5">
               <p className="text-[13px] leading-relaxed text-ink-dim">
-                처음에 답한 내용으로 {design.name}가 말투를 맞추고 있어요. 이건 진단이 아니라,
+                처음에 답한 내용으로 {fish.name}가 말투를 맞추고 있어요. 이건 진단이 아니라,
                 대화를 편하게 만들기 위한 설정값입니다.
               </p>
               <div className="space-y-3">
@@ -153,7 +153,7 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
                 <Label>내 이야기는 어디에 있나요</Label>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
                   대화 내용은 어디에도 저장하지 않습니다. 이 창을 닫으면 사라져요.
-                  {design.name}가 기억하는 짧은 메모와 프로필만 이 브라우저 안에 남고, 서버에는
+                  {fish.name}가 기억하는 짧은 메모와 프로필만 이 브라우저 안에 남고, 서버에는
                   보관하지 않습니다. 답변을 만드는 순간에만 대화가 AI 모델로 전송됩니다.
                 </p>
               </div>
@@ -190,7 +190,7 @@ export function JournalSheet({ onClose }: { onClose: () => void }) {
                 ) : (
                   <div className="rounded-xl border border-red-400/25 bg-red-950/25 p-3.5">
                     <p className="text-[13px] text-red-100/85">
-                      {design.name}와 쌓은 기억과 관계가 전부 사라집니다. 되돌릴 수 없어요.
+                      {fish.name}와 쌓은 기억과 관계가 전부 사라집니다. 되돌릴 수 없어요.
                     </p>
                     <div className="mt-3 flex gap-2">
                       <button

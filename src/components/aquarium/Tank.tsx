@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Decor } from "./Decor";
 import { FishActor } from "./FishActor";
 import { SpeechBubble, splitGesture, type HeadPos } from "./SpeechBubble";
-import type { FishActivity, FishCue, FishDesign } from "@/lib/types";
+import type { FishActivity, FishCue } from "@/lib/types";
 
 /**
  * 어항. 커다랗고 조용하다.
@@ -14,7 +14,6 @@ import type { FishActivity, FishCue, FishDesign } from "@/lib/types";
  */
 
 interface Props {
-  design: FishDesign;
   activity: FishActivity;
   cue: FishCue;
   mood: number;
@@ -30,7 +29,6 @@ interface Props {
 }
 
 export function Tank({
-  design,
   activity,
   cue,
   mood,
@@ -85,7 +83,6 @@ export function Tank({
         <Decor />
 
         <FishActor
-          design={design}
           activity={activity}
           cue={cue}
           mood={mood}

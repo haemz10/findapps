@@ -1,23 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FishSprite } from "@/components/aquarium/FishSprite";
+import { FishPortrait } from "@/components/aquarium/FishPortrait";
 import { QUIZ, TONE_CHOICES, scoreQuiz } from "@/lib/psych/quiz";
-import {
-  BODY_SHAPES,
-  DEFAULT_DESIGN,
-  EYE_SHAPES,
-  FIN_STYLES,
-  MOUTH_SHAPES,
-  PALETTES,
-  SCALE_PATTERNS,
-  applyPalette,
-  randomDesign,
-} from "@/lib/fish/design";
 import { useApp } from "@/lib/store";
-import type { FishDesign, UserProfile } from "@/lib/types";
+import type { UserProfile } from "@/lib/types";
 
-type Step = "welcome" | "name" | "quiz" | "tone" | "design" | "naming" | "ready";
+type Step = "welcome" | "name" | "quiz" | "tone" | "naming" | "ready";
 
 export function Onboarding() {
   const complete = useApp((s) => s.completeOnboarding);
@@ -28,7 +17,6 @@ export function Onboarding() {
   const [qi, setQi] = useState(0);
   const [tone, setTone] = useState<"soft" | "balanced" | "direct" | null>(null);
   const [wantsAdvice, setWantsAdvice] = useState<boolean | null>(null);
-  const [design, setDesign] = useState<FishDesign>(DEFAULT_DESIGN);
   const [fishName, setFishName] = useState("");
 
   const traits = useMemo(() => scoreQuiz(answers), [answers]);
@@ -41,7 +29,7 @@ export function Onboarding() {
       nickname: nickname.trim() || "너",
       answers,
       overrides,
-      design: { ...design, name: fishName.trim() || "물고기" },
+      fishName: fishName.trim() || "물고기",
     });
   };
 
@@ -86,31 +74,21 @@ export function Onboarding() {
             setTone={setTone}
             setWantsAdvice={setWantsAdvice}
             traits={traits}
-            onNext={() => setStep("design")}
-          />
-        )}
-
-        {step === "design" && (
-          <DesignStep
-            design={design}
-            setDesign={setDesign}
             onNext={() => setStep("naming")}
-            onBack={() => setStep("tone")}
           />
         )}
 
         {step === "naming" && (
           <NamingStep
-            design={design}
             name={fishName}
             setName={setFishName}
             onNext={() => setStep("ready")}
-            onBack={() => setStep("design")}
+            onBack={() => setStep("tone")}
           />
         )}
 
         {step === "ready" && (
-          <ReadyStep design={{ ...design, name: fishName || "물고기" }} onNext={finish} />
+          <ReadyStep name={fishName || "물고기"} onNext={finish} />
         )}
       </div>
     </div>
@@ -206,7 +184,7 @@ function Welcome({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-1 flex-col justify-center animate-fade-up">
       <div className="mx-auto mb-10 h-40 w-64 opacity-90">
-        <FishSprite design={DEFAULT_DESIGN} activity="drifting" className="h-full w-full" />
+        <FishPortrait className="h-full w-full" />
       </div>
       <Title>
         불을 끄면,
@@ -411,270 +389,19 @@ function ToneStep({
 
       <div className="mt-9">
         <PrimaryButton onClick={onNext} disabled={!tone || wantsAdvice === null}>
-          이제 물고기를 만들어요
+          이제 이름을 지어줄게요
         </PrimaryButton>
       </div>
     </div>
   );
 }
 
-function DesignStep({
-  design,
-  setDesign,
-  onNext,
-  onBack,
-}: {
-  design: FishDesign;
-  setDesign: (d: FishDesign) => void;
-  onNext: () => void;
-  onBack: () => void;
-}) {
-  const [tab, setTab] = useState<"color" | "body" | "face" | "fin" | "size">("color");
-
-  const set = <K extends keyof FishDesign>(k: K, v: FishDesign[K]) =>
-    setDesign({ ...design, [k]: v });
-
-  const tabs = [
-    { id: "color", label: "색" },
-    { id: "body", label: "몸" },
-    { id: "face", label: "얼굴" },
-    { id: "fin", label: "지느러미" },
-    { id: "size", label: "크기" },
-  ] as const;
-
-  return (
-    <div className="flex flex-1 flex-col">
-      <div className="pt-2">
-        <Title>당신의 물고기를 만들어요</Title>
-        <Sub>여기서 고른 생김새는 물고기의 말투에도 배어납니다.</Sub>
-      </div>
-
-      {/* 미리보기 */}
-      <div className="relative mt-6 h-52 overflow-hidden rounded-3xl border border-white/8">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(180deg, #123a5e 0%, #050d17 100%)",
-            boxShadow: "inset 0 0 70px rgba(0,0,0,0.6)",
-          }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="h-44 w-64 transition-transform duration-500"
-            style={{ transform: `scale(${design.size})` }}
-          >
-            <FishSprite design={design} activity="drifting" className="h-full w-full" />
-          </div>
-        </div>
-        <button
-          onClick={() => setDesign({ ...randomDesign(), name: design.name })}
-          type="button"
-          className="absolute right-3 top-3 min-h-[40px] rounded-full border border-white/12 bg-black/50
-                     px-4 text-[13px] text-ink-dim backdrop-blur transition hover:text-ink active:scale-95"
-        >
-          무작위
-        </button>
-      </div>
-
-      {/* 탭 */}
-      <div className="scroll-x mt-5 flex gap-1.5 pb-1">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            type="button"
-            className={`min-h-[42px] shrink-0 rounded-full px-4 text-[14px] transition
-              ${tab === t.id ? "bg-white/12 text-ink" : "text-ink-faint hover:text-ink-dim"}`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="scroll-y mt-4 flex-1 pb-4">
-        {tab === "color" && (
-          <div className="grid grid-cols-4 gap-2.5">
-            {PALETTES.map((p) => {
-              const active = design.bodyMid === p.bodyMid;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setDesign(applyPalette(design, p))}
-                  type="button"
-                  className={`min-h-[76px] rounded-2xl border p-2.5 transition ${
-                    active ? "border-sky-300/50 bg-sky-300/10" : "border-white/8 hover:border-white/20"
-                  }`}
-                >
-                  <div
-                    className="mx-auto h-9 w-9 rounded-full"
-                    style={{
-                      background: `linear-gradient(150deg, ${p.bodyTop}, ${p.bodyMid} 50%, ${p.bodyBottom})`,
-                      boxShadow: `0 0 14px ${p.bodyMid}55`,
-                    }}
-                  />
-                  <div className="mt-2 text-center text-[11px] text-ink-dim">{p.label}</div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {tab === "body" && (
-          <>
-            <OptionGroup
-              label="몸 모양"
-              options={BODY_SHAPES}
-              value={design.bodyShape}
-              onChange={(v) => set("bodyShape", v)}
-            />
-            <OptionGroup
-              label="비늘"
-              options={SCALE_PATTERNS}
-              value={design.scalePattern}
-              onChange={(v) => set("scalePattern", v)}
-            />
-          </>
-        )}
-
-        {tab === "face" && (
-          <>
-            <OptionGroup
-              label="눈"
-              options={EYE_SHAPES}
-              value={design.eyeShape}
-              onChange={(v) => set("eyeShape", v)}
-            />
-            <OptionGroup
-              label="입"
-              options={MOUTH_SHAPES}
-              value={design.mouthShape}
-              onChange={(v) => set("mouthShape", v)}
-            />
-          </>
-        )}
-
-        {tab === "fin" && (
-          <>
-            <OptionGroup
-              label="지느러미"
-              options={FIN_STYLES}
-              value={design.finStyle}
-              onChange={(v) => set("finStyle", v)}
-            />
-            <Slider
-              label="지느러미가 흔들리는 정도"
-              value={design.finFlow}
-              min={0.5}
-              max={1.6}
-              onChange={(v) => set("finFlow", v)}
-            />
-          </>
-        )}
-
-        {tab === "size" && (
-          <>
-            <Slider
-              label="크기"
-              value={design.size}
-              min={0.75}
-              max={1.4}
-              onChange={(v) => set("size", v)}
-            />
-            <Slider
-              label="어두울 때 빛나는 정도"
-              value={design.glow}
-              min={0}
-              max={1}
-              onChange={(v) => set("glow", v)}
-            />
-          </>
-        )}
-      </div>
-
-      <div className="flex items-center gap-3 pb-2 pt-2">
-        <GhostButton onClick={onBack}>← 이전</GhostButton>
-        <div className="flex-1">
-          <PrimaryButton onClick={onNext}>이 아이로 할래요</PrimaryButton>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function OptionGroup<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: readonly { value: T; label: string; hint?: string }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div className="mb-6">
-      <div className="mb-2.5 text-[13px] text-ink-faint">{label}</div>
-      <div className="flex flex-wrap gap-2">
-        {options.map((o) => (
-          <button
-            key={o.value}
-            onClick={() => onChange(o.value)}
-            title={o.hint}
-            type="button"
-            className={`min-h-[48px] rounded-xl border px-3.5 py-2.5 text-left transition
-              ${
-                value === o.value
-                  ? "border-sky-300/50 bg-sky-300/12 text-ink"
-                  : "border-white/8 bg-white/[0.03] text-ink-dim hover:border-white/18"
-              }`}
-          >
-            <div className="text-[13px] font-medium">{o.label}</div>
-            {o.hint && <div className="mt-0.5 text-[11px] text-ink-faint">{o.hint}</div>}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Slider({
-  label,
-  value,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div className="mb-6">
-      <div className="mb-2.5 text-[13px] text-ink-faint">{label}</div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={0.01}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full"
-      />
-    </div>
-  );
-}
-
 function NamingStep({
-  design,
   name,
   setName,
   onNext,
   onBack,
 }: {
-  design: FishDesign;
   name: string;
   setName: (v: string) => void;
   onNext: () => void;
@@ -683,7 +410,7 @@ function NamingStep({
   return (
     <div className="flex flex-1 flex-col justify-center animate-fade-up">
       <div className="mx-auto mb-8 h-40 w-64">
-        <FishSprite design={design} activity="drifting" className="h-full w-full" />
+        <FishPortrait className="h-full w-full" />
       </div>
       <Title>이름을 지어주세요</Title>
       <Sub>이름을 부르는 순간부터, 이 아이는 당신의 물고기가 됩니다.</Sub>
@@ -712,15 +439,15 @@ function NamingStep({
   );
 }
 
-function ReadyStep({ design, onNext }: { design: FishDesign; onNext: () => void }) {
+function ReadyStep({ name, onNext }: { name: string; onNext: () => void }) {
   return (
     <div className="flex flex-1 flex-col justify-center animate-fade-up">
       <div className="mx-auto mb-8 h-44 w-72">
-        <FishSprite design={design} activity="drifting" className="h-full w-full" />
+        <FishPortrait className="h-full w-full" />
       </div>
-      <Title>{design.name}가 물속에서 당신을 봅니다.</Title>
+      <Title>{name}가 물속에서 당신을 봅니다.</Title>
       <Sub>
-        {design.name}는 낮에는 잠을 자고 밤에 깨어납니다. 낮에 만나고 싶다면 방의 불을 꺼 주세요.
+        {name}는 낮에는 잠을 자고 밤에 깨어납니다. 낮에 만나고 싶다면 방의 불을 꺼 주세요.
         <br />
         <br />
         살아있는 아이니까, 밥도 주고 물도 갈아주어야 해요. 그리고 무엇보다 — 자주 들여다봐 주세요.

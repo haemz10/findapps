@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FishSprite } from "./FishSprite";
 import { FishImage } from "./FishImage";
 import { FISH_ASSET } from "@/lib/fish/asset";
-import { initialState, step, type BehaviorState, cueToTempo } from "@/lib/fish/behavior";
-import type { FishActivity, FishCue, FishDesign } from "@/lib/types";
+import { initialState, step, type BehaviorState } from "@/lib/fish/behavior";
+import type { FishActivity, FishCue } from "@/lib/types";
 
 /**
  * 물고기를 실제로 움직이는 부분.
@@ -20,7 +19,6 @@ const SPRITE_W = 300;
 const SPRITE_H = 200;
 
 interface Props {
-  design: FishDesign;
   activity: FishActivity;
   cue: FishCue;
   mood: number;
@@ -34,7 +32,6 @@ interface Props {
 }
 
 export function FishActor({
-  design,
   activity,
   cue,
   mood,
@@ -95,7 +92,7 @@ export function FishActor({
         const fit = boxRef.current.w
           ? Math.max(0.62, Math.min(1.12, boxRef.current.w / 420))
           : 1;
-        const scale = (0.54 + depth * 0.7) * design.size * fit;
+        const scale = (0.54 + depth * 0.7) * fit;
         // 흐림은 아주 뒤로 물러났을 때만. 물속이라는 느낌만 주면 되고,
         // 물고기를 들여다보는 게 이 앱의 전부이므로 대부분의 시간은 선명해야 한다.
         const blur = Math.max(0, 0.62 - depth) * 2.6;
@@ -145,15 +142,12 @@ export function FishActor({
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [design.size, onEatFood]);
+  }, [onEatFood]);
 
-  // 활동이 바뀌면 스프라이트를 다시 그린다 (지느러미 속도 등)
+  // 활동이 바뀌면 움직임의 결이 달라진다
   useEffect(() => {
     force((n) => n + 1);
   }, [activity, cue]);
-
-  const tempo = cueToTempo(cue);
-  const tuned: FishDesign = { ...design, finFlow: design.finFlow * tempo.finFlow };
 
   return (
     <div
@@ -168,20 +162,7 @@ export function FishActor({
         transition: "none",
       }}
     >
-      {/* 그림이 있으면 그림으로, 없으면 계산해서 그린 물고기로 */}
-      <FishImage
-        activity={activity}
-        speaking={speaking}
-        className="relative h-full w-full"
-        fallback={
-          <FishSprite
-            design={tuned}
-            activity={activity}
-            speaking={speaking}
-            className="h-full w-full"
-          />
-        }
-      />
+      <FishImage activity={activity} cue={cue} speaking={speaking} className="relative h-full w-full" />
     </div>
   );
 }

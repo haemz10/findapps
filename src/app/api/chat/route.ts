@@ -64,9 +64,9 @@ export async function POST(req: Request) {
     turn: userTurns.length,
   });
 
-  const stablePrefix = buildStablePrefix(r.design, r.profile.nickname);
+  const stablePrefix = buildStablePrefix(r.fish, r.profile.nickname);
   const turnContext = buildTurnContext({
-    design: r.design,
+    fish: r.fish,
     profile: r.profile,
     care: r.care,
     bond: r.bond,

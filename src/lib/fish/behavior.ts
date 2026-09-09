@@ -1,4 +1,4 @@
-import type { FishActivity, FishCue } from "@/lib/types";
+import type { FishActivity } from "@/lib/types";
 
 /**
  * 물고기의 움직임.
@@ -214,24 +214,4 @@ export function decideActivity(o: {
   if (o.userTyping) return "approaching";
   if (o.clarity < 25 || o.fullness < 15) return "sulking";
   return "drifting";
-}
-
-/** 대화 표정 → 움직임의 결 */
-export function cueToTempo(cue: FishCue): { finFlow: number; bob: number } {
-  switch (cue) {
-    case "playful":
-      return { finFlow: 1.5, bob: 1.4 };
-    case "warm":
-      return { finFlow: 1.15, bob: 1.05 };
-    case "curious":
-      return { finFlow: 1.25, bob: 1.1 };
-    case "concerned":
-      return { finFlow: 0.75, bob: 0.7 };
-    case "steady":
-      return { finFlow: 0.85, bob: 0.8 };
-    case "sleepy":
-      return { finFlow: 0.5, bob: 0.5 };
-    default:
-      return { finFlow: 1, bob: 1 };
-  }
 }
