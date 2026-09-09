@@ -8,6 +8,12 @@
  */
 
 export interface FishAsset {
+  /**
+   * 그림 파일을 쓸 것인가.
+   * false 면 코드로 그린 물고기를 쓴다. 파일을 넣기 전까지 이걸 켜두면
+   * 매번 404 를 내므로, 파일을 실제로 추가한 다음 true 로 바꾼다.
+   */
+  enabled: boolean;
   /** public/ 아래 경로 */
   src: string;
   /** 이미지 안에서 주둥이(말이 나오는 곳)의 위치, 0~1 */
@@ -27,6 +33,8 @@ export interface FishAsset {
 }
 
 export const FISH_ASSET: FishAsset = {
+  // public/fish/betta.png 를 넣은 뒤 true 로 바꾸면 그 사진이 물고기가 된다
+  enabled: false,
   src: "/fish/betta.png",
   // 첨부한 그림에 맞춰 실제 파일이 들어오면 다시 잰다
   mouth: { x: 0.72, y: 0.42 },

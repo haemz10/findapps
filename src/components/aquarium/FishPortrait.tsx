@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FISH_ASSET } from "@/lib/fish/asset";
+import { FishSprite } from "./FishSprite";
 
 /**
  * 움직이지 않는 물고기 그림. 온보딩처럼 물고기를 그냥 보여주기만 하면 되는 곳에 쓴다.
@@ -10,18 +11,8 @@ import { FISH_ASSET } from "@/lib/fish/asset";
 export function FishPortrait({ className }: { className?: string }) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) {
-    return (
-      <div className={`${className ?? ""} grid place-items-center`}>
-        <div className="rounded-2xl border border-dashed border-white/15 px-5 py-4 text-center">
-          <p className="text-[12px] leading-relaxed text-ink-faint">
-            물고기 그림이 아직 없어요
-            <br />
-            public/fish/betta.png
-          </p>
-        </div>
-      </div>
-    );
+  if (!FISH_ASSET.enabled || failed) {
+    return <FishSprite activity="drifting" className={className} />;
   }
 
   return (

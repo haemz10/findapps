@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FISH_ASSET } from "@/lib/fish/asset";
+import { FishSprite } from "./FishSprite";
 import type { FishActivity, FishCue } from "@/lib/types";
 
 /**
@@ -35,8 +36,10 @@ const TEMPO: Record<FishCue, { amp: number; speed: number }> = {
 export function FishImage({ activity, cue, speaking, className }: Props) {
   const [failed, setFailed] = useState(false);
 
-  // 그림이 아직 없을 때. 앱이 깨지는 것보다는 빈 어항이 낫다.
-  if (failed) return <MissingAsset className={className} />;
+  // 그림 파일이 없거나 불러오지 못하면 코드로 그린 물고기로.
+  if (!FISH_ASSET.enabled || failed) {
+    return <FishSprite activity={activity} speaking={speaking} className={className} />;
+  }
 
   const sleeping = activity === "sleeping";
   const lively = activity === "playing";
@@ -113,24 +116,6 @@ export function FishImage({ activity, cue, speaking, className }: Props) {
           </span>
         </div>
       )}
-    </div>
-  );
-}
-
-/**
- * public/fish/betta.png 가 없을 때.
- * 물고기를 흉내 내지 않는다 — 없으면 없다고 말하는 편이 정직하다.
- */
-function MissingAsset({ className }: { className?: string }) {
-  return (
-    <div className={`${className ?? ""} grid place-items-center`}>
-      <div className="rounded-2xl border border-dashed border-white/20 bg-black/40 px-4 py-3 text-center backdrop-blur-sm">
-        <p className="text-[12px] leading-relaxed text-ink-dim">
-          물고기 그림이 아직 없어요
-          <br />
-          <span className="text-ink-faint">public/fish/betta.png</span>
-        </p>
-      </div>
     </div>
   );
 }
