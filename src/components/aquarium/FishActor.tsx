@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FishSprite } from "./FishSprite";
+import { FishImage } from "./FishImage";
+import { FISH_ASSET } from "@/lib/fish/asset";
 import { initialState, step, type BehaviorState, cueToTempo } from "@/lib/fish/behavior";
 import type { FishActivity, FishCue, FishDesign } from "@/lib/types";
 
@@ -110,9 +112,12 @@ export function FishActor({
 
         el.style.left = `${x * 100}%`;
         el.style.top = `${y * 100}%`;
+        // 정면을 보는 그림은 뒤집으면 어색하다 — 방향은 살짝 기우는 것으로만 표현한다
+        const flip = FISH_ASSET.frontFacing ? 1 : s.dir;
+        const lean = FISH_ASSET.frontFacing ? s.dir * 3 : 0;
         el.style.transform =
-          `translate(-50%, -50%) scale(${scale}) scaleX(${s.dir}) ` +
-          `rotate(${s.tilt}deg) rotateY(${s.roll}deg)`;
+          `translate(-50%, -50%) scale(${scale}) scaleX(${flip}) ` +
+          `rotate(${s.tilt + lean}deg) rotateY(${s.roll}deg)`;
         el.style.filter = `blur(${blur.toFixed(2)}px) brightness(${bright.toFixed(2)})`;
         el.style.opacity = String(opacity);
         el.style.zIndex = String(5 + Math.round(depth * 8));
@@ -120,10 +125,11 @@ export function FishActor({
         // 얼굴 위치를 바깥에 알려준다. 매 프레임 부모를 리렌더하면 60fps 가 무너지므로
         // 눈에 띄게 움직였을 때만 보고한다.
         if (onHeadRef.current && w && h) {
-          // 스프라이트 좌표에서 주둥이는 오른쪽 끝 부근이다
-          const noseOffset = ((SPRITE_W * 0.32) * scale * s.dir) / w;
-          const hx = x + noseOffset;
-          const hy = y - (SPRITE_H * 0.12 * scale) / h;
+          // 주둥이는 그림 안에서 어디 있는지가 정해져 있다 (asset.ts)
+          const mouthX = FISH_ASSET.mouth.x - 0.5;
+          const mouthY = FISH_ASSET.mouth.y - 0.5;
+          const hx = x + (SPRITE_W * mouthX * scale * (FISH_ASSET.frontFacing ? 1 : s.dir)) / w;
+          const hy = y + (SPRITE_H * mouthY * scale) / h;
           if (
             Math.abs(hx - headRef.current.x) > 0.006 ||
             Math.abs(hy - headRef.current.y) > 0.006
@@ -162,11 +168,19 @@ export function FishActor({
         transition: "none",
       }}
     >
-      <FishSprite
-        design={tuned}
+      {/* 그림이 있으면 그림으로, 없으면 계산해서 그린 물고기로 */}
+      <FishImage
         activity={activity}
         speaking={speaking}
-        className="h-full w-full"
+        className="relative h-full w-full"
+        fallback={
+          <FishSprite
+            design={tuned}
+            activity={activity}
+            speaking={speaking}
+            className="h-full w-full"
+          />
+        }
       />
     </div>
   );

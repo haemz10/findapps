@@ -286,6 +286,48 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
   }
 }
 
+/* ── 그림 물고기의 움직임 ── */
+
+@keyframes fish-sway {
+  0%,
+  100% {
+    transform: rotate(calc(-1 * var(--sway, 2.6deg)));
+  }
+  50% {
+    transform: rotate(var(--sway, 2.6deg));
+  }
+}
+
+@keyframes fish-bob {
+  0%,
+  100% {
+    transform: translateY(calc(-1 * var(--bob, 3.4px)));
+  }
+  50% {
+    transform: translateY(var(--bob, 3.4px));
+  }
+}
+
+@keyframes fish-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.022);
+  }
+}
+
+@keyframes fish-talk {
+  0%,
+  100% {
+    transform: scale(1) translateX(0);
+  }
+  50% {
+    transform: scale(1.012) translateX(1.5px);
+  }
+}
+
 @keyframes sleep-z {
   0% {
     opacity: 0;
