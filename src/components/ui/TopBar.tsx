@@ -90,7 +90,7 @@ function IconButton({
         ${
           active
             ? "border-sky-300/35 bg-sky-300/12 text-sky-100"
-            : "border-white/10 bg-white/[0.04] text-ink-dim hover:border-white/20 hover:text-ink"
+            : "border-white/20 bg-white/[0.07] text-ink hover:border-sky-300/45"
         }`}
     >
       {children}

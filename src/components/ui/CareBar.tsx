@@ -133,8 +133,8 @@ function ActionButton({
       className={`min-h-[44px] rounded-full border px-5 text-[13px] transition active:scale-95
         ${
           dim
-            ? "border-white/6 bg-white/[0.02] text-ink-faint/60"
-            : "border-white/12 bg-white/[0.06] text-ink-dim hover:border-white/25 hover:text-ink"
+            ? "border-white/10 bg-white/[0.04] text-ink-dim/70"
+            : "border-white/20 bg-white/[0.08] text-ink hover:border-sky-300/50 hover:bg-sky-300/10"
         }`}
     >
       {children}

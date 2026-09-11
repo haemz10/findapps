@@ -110,13 +110,13 @@ export function SpeechBubble({ head, text, streaming, gestures, onDismiss }: Pro
         />
         <div
           data-selectable
-          className="scroll-y relative max-h-[6.2rem] rounded-2xl border border-white/25
-                     bg-[#0d1a2c]/95 py-2.5 pl-3.5 pr-7 text-[13.5px] leading-[1.6] text-ink
+          className="scroll-y relative max-h-[6.2rem] rounded-[20px] border border-white/25
+                     bg-[#0d1a2c]/95 py-2.5 pl-3.5 pr-7 text-[12.8px] leading-[1.55] text-ink
                      shadow-[0_6px_28px_rgba(0,0,0,0.6)]"
         >
           {gestures.length > 0 && (
-            <span className="mb-1 block text-[12px] italic leading-snug text-sky-100/55">
-              {gestures.join(" · ")}
+            <span className="text-[11.2px] italic text-sky-100/70">
+              {gestures.join(" · ")}{"  "}
             </span>
           )}
           <span className="whitespace-pre-wrap">{text}</span>
@@ -149,9 +149,11 @@ export function splitGesture(text: string): { gestures: string[]; speech: string
   const speech = text
     .replace(/\*([^*]+)\*/g, (_, g: string) => {
       gestures.push(g.trim());
-      return "";
+      return " ";
     })
-    .replace(/\n{3,}/g, "\n\n")
+    // 말풍선 하나에 들어가야 한다 — 빈 줄도 줄바꿈도 만들지 않는다
+    .replace(/\s*\n+\s*/g, " ")
+    .replace(/\s{2,}/g, " ")
     .trim();
   return { gestures, speech };
 }

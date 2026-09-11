@@ -65,8 +65,8 @@ export function Room() {
 
   const awake = fishAwake(time, roomLightOn);
   const sayingMessage = sayingId ? messages.find((m) => m.id === sayingId) : undefined;
-  // 얼굴에서 말하는 중인 줄은 아래 기록에 겹쳐 보이지 않게 뺀다
-  const logMessages = sayingId ? messages.filter((m) => m.id !== sayingId) : messages;
+  // 물고기 말은 말풍선에만 뜬다. 아래에는 내가 한 말만 쌓인다.
+  const logMessages = messages.filter((m) => m.role === "user");
   const mood = moodOf(care, bond.rapport);
   const amb = useMemo(() => ambienceFor(time.phase, roomLightOn), [time.phase, roomLightOn]);
 
@@ -392,7 +392,7 @@ export function Room() {
 
         {/* 어항 — 대화가 시작되면 조금 물러나 말풍선에 자리를 내준다 */}
         <div
-          className={`relative mt-3 min-h-[104px] shrink transition-[height] duration-700 ease-out ${
+          className={`relative mt-3 min-h-[88px] shrink transition-[height] duration-700 ease-out ${
             messages.length > 1 ? "h-[40dvh]" : "h-[50dvh]"
           }`}
         >
@@ -444,7 +444,6 @@ export function Room() {
           <ChatDock
             fishName={fish.name}
             messages={logMessages}
-            streamingId={streamingId}
             busy={busy}
             awake={awake}
             showCrisis={showCrisis}

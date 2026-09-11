@@ -72,7 +72,7 @@ export const FADE_SPAN_MS = 70_000;
 export const CHESHIRE_BEAT_MS = 520;
 
 /**
- * 말풍선이 머무는 시간. 이 뒤에는 말도 물에 풀리듯 걷히고 아래 기록으로 내려간다.
- * 말풍선이 계속 떠 있으면 물고기가 사라질 틈이 없다.
+ * 말풍선이 머무는 시간. 물고기 말은 여기에만 뜨므로 읽을 시간이 넉넉해야 하고,
+ * 동시에 계속 떠 있으면 물고기가 사라질 틈이 없다. 그 사이의 타협점.
  */
-export const SAYING_LINGER_MS = 28_000;
+export const SAYING_LINGER_MS = 40_000;
